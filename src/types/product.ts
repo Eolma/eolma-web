@@ -1,0 +1,92 @@
+export interface RegisterProductRequest {
+  title: string;
+  description: string;
+  category: string;
+  conditionGrade: string;
+  startingPrice: number;
+  instantPrice: number | null;
+  reservePrice: number | null;
+  minBidUnit: number;
+  endType: string;
+  endValue: string;
+  imageUrls: string[];
+}
+
+export type UpdateProductRequest = RegisterProductRequest;
+
+export interface ProductResponse {
+  id: number;
+  sellerId: number;
+  title: string;
+  description: string;
+  category: string;
+  conditionGrade: string;
+  startingPrice: number;
+  instantPrice: number | null;
+  reservePrice: number | null;
+  minBidUnit: number;
+  endType: string;
+  endValue: string;
+  status: string;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductListResponse {
+  content: ProductResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  hasNext: boolean;
+}
+
+export const CATEGORIES = [
+  "ELECTRONICS",
+  "FASHION",
+  "HOME",
+  "SPORTS",
+  "BOOKS",
+  "TOYS",
+  "BEAUTY",
+  "AUTO",
+  "OTHER",
+] as const;
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  ELECTRONICS: "전자기기",
+  FASHION: "패션",
+  HOME: "가구/인테리어",
+  SPORTS: "스포츠/레저",
+  BOOKS: "도서",
+  TOYS: "취미/게임",
+  BEAUTY: "뷰티",
+  AUTO: "자동차",
+  OTHER: "기타",
+};
+
+export const CONDITION_GRADES = ["S", "A", "B", "C"] as const;
+
+export const CONDITION_LABELS: Record<string, string> = {
+  S: "미개봉/새상품",
+  A: "거의 새것",
+  B: "사용감 있음",
+  C: "상태 나쁨",
+};
+
+export const END_TYPES = ["TIME", "BID_COUNT", "COMBINED"] as const;
+
+export const END_TYPE_LABELS: Record<string, string> = {
+  TIME: "시간제",
+  BID_COUNT: "입찰횟수제",
+  COMBINED: "복합",
+};
+
+export const PRODUCT_STATUS_LABELS: Record<string, string> = {
+  DRAFT: "임시저장",
+  ACTIVE: "경매 대기",
+  IN_AUCTION: "경매 중",
+  SOLD: "판매 완료",
+  CANCELLED: "취소됨",
+};
