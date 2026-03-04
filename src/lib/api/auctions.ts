@@ -19,7 +19,8 @@ export async function getAuction(id: number): Promise<AuctionResponse> {
 }
 
 export async function getBidHistory(auctionId: number): Promise<BidHistoryResponse[]> {
-  return apiClient<BidHistoryResponse[]>(`/api/v1/auctions/${auctionId}/bids`);
+  const data = await apiClient<{ content: BidHistoryResponse[] }>(`/api/v1/auctions/${auctionId}/bids`);
+  return data.content;
 }
 
 export async function getMyAuctions(params?: {

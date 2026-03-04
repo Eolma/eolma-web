@@ -168,17 +168,36 @@ export function ProductForm() {
           <Select
             label="마감 조건"
             value={endType}
-            onChange={(e) => setEndType(e.target.value)}
+            onChange={(e) => { setEndType(e.target.value); setEndValue(""); }}
             options={END_TYPES.map((t) => ({ value: t, label: END_TYPE_LABELS[t] }))}
           />
-          <Input
-            label={endType === "TIME" ? "마감 시간" : endType === "BID_COUNT" ? "최대 입찰 횟수" : "마감 조건"}
-            type={endType === "TIME" ? "datetime-local" : "text"}
-            value={endValue}
-            onChange={(e) => setEndValue(e.target.value)}
-            placeholder={endType === "TIME" ? "" : "예: 50"}
-            required
-          />
+          {endType === "TIME" ? (
+            <Select
+              label="경매 시간"
+              value={endValue}
+              onChange={(e) => setEndValue(e.target.value)}
+              placeholder="선택하세요"
+              options={[
+                { value: "6", label: "6시간" },
+                { value: "12", label: "12시간" },
+                { value: "24", label: "24시간 (1일)" },
+                { value: "48", label: "48시간 (2일)" },
+                { value: "72", label: "72시간 (3일)" },
+                { value: "168", label: "168시간 (7일)" },
+              ]}
+              required
+            />
+          ) : (
+            <Input
+              label="최대 입찰 횟수"
+              type="number"
+              value={endValue}
+              onChange={(e) => setEndValue(e.target.value)}
+              placeholder="예: 50"
+              min="1"
+              required
+            />
+          )}
         </div>
       </div>
 
@@ -196,7 +215,7 @@ export function ProductForm() {
               }
             }}
           />
-          <Button type="button" variant="secondary" onClick={addImageUrl}>
+          <Button type="button" variant="secondary" onClick={addImageUrl} className="shrink-0 whitespace-nowrap">
             추가
           </Button>
         </div>

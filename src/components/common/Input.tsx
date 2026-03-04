@@ -28,6 +28,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ${error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
             ${className}
           `}
+          onInvalid={(e) => {
+            const input = e.target as HTMLInputElement;
+            if (input.validity.valueMissing) {
+              input.setCustomValidity("이 항목을 입력해주세요.");
+            }
+          }}
+          onInput={(e) => {
+            (e.target as HTMLInputElement).setCustomValidity("");
+          }}
           {...props}
         />
         {error && <p className="mt-1 text-sm text-red-600">{error}</p>}

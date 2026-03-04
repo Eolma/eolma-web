@@ -10,7 +10,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, placeholder, className = "", id, ...props }, ref) => {
+  ({ label, error, options, placeholder, className = "", id, onChange, ...props }, ref) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, "-");
     return (
       <div className="w-full">
@@ -29,6 +29,16 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ${error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
             ${className}
           `}
+          onInvalid={(e) => {
+            const select = e.target as HTMLSelectElement;
+            if (select.validity.valueMissing) {
+              select.setCustomValidity("항목을 선택해주세요.");
+            }
+          }}
+          onChange={(e) => {
+            (e.target as HTMLSelectElement).setCustomValidity("");
+            onChange?.(e);
+          }}
           {...props}
         >
           {placeholder && (
