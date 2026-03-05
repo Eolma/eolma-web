@@ -28,7 +28,7 @@ export interface ProductResponse {
   endType: string;
   endValue: string;
   status: string;
-  imageUrls: string[];
+  imageUrls: string[] | null;
   createdAt: string;
   updatedAt: string;
 }

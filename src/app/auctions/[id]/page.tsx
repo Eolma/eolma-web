@@ -81,7 +81,7 @@ export default function AuctionDetailPage() {
   const lastBidResult = useMemo(() => {
     if (!lastMessage || lastMessage.type !== "BID_RESULT") return null;
     const msg = lastMessage as BidResultMessage;
-    return { status: msg.status };
+    return { status: msg.status, message: msg.message };
   }, [lastMessage]);
 
   // 입찰 성공 시 입찰 이력 자동 갱신

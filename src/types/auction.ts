@@ -47,6 +47,7 @@ export interface BidMessage {
 export interface BidResultMessage {
   type: "BID_RESULT";
   status: string;
+  message?: string;
   currentPrice: number;
   bidCount: number;
   nextMinBid: number;

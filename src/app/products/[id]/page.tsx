@@ -80,7 +80,7 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 이미지 영역 */}
         <div>
-          {product.imageUrls.length > 0 ? (
+          {product.imageUrls && product.imageUrls.length > 0 ? (
             <div className="space-y-3">
               <div className="aspect-square bg-bg-tertiary rounded-xl overflow-hidden">
                 {failedImages.has(0) ? (

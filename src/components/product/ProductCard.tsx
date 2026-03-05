@@ -26,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Card noPadding interactive className="overflow-hidden h-full">
         {/* 이미지 영역 */}
         <div className="aspect-[4/3] bg-bg-tertiary relative">
-          {product.imageUrls.length > 0 ? (
+          {product.imageUrls && product.imageUrls.length > 0 ? (
             <img
               src={product.imageUrls[0]}
               alt={product.title}
