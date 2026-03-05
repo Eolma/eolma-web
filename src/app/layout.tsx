@@ -5,6 +5,10 @@ import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { AuthInitializer } from "@/components/layout/AuthInitializer";
 import { PageTransition } from "@/components/common/PageTransition";
+import { ToastProvider } from "@/components/common/Toast";
+import { NetworkBanner } from "@/components/common/NetworkBanner";
+import { SwipeBackProvider } from "@/components/layout/SwipeBackProvider";
+import { FloatingActionButton } from "@/components/common/FloatingActionButton";
 
 export const metadata: Metadata = {
   title: "얼마 - 중고 경매 플랫폼",
@@ -49,12 +53,17 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-bg text-text-primary">
         <AuthInitializer>
-          <Header />
-          <main className="flex-1 pb-16 md:pb-0">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
-          <BottomNav />
+          <SwipeBackProvider>
+            <Header />
+            <main className="flex-1 pb-16 md:pb-0">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <Footer />
+            <BottomNav />
+            <FloatingActionButton />
+          </SwipeBackProvider>
+          <NetworkBanner />
+          <ToastProvider />
         </AuthInitializer>
       </body>
     </html>

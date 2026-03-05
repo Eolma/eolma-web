@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, User } from "lucide-react";
+import { Home, User } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -14,7 +14,6 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "홈", icon: Home, matchPrefix: "/" },
-  { href: "/products/new", label: "등록", icon: PlusCircle, matchPrefix: "/products/new" },
   { href: "/mypage", label: "마이", icon: User, matchPrefix: "/mypage" },
 ];
 
