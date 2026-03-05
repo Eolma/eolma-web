@@ -59,6 +59,7 @@ export interface AuctionUpdateMessage {
   bidCount: number;
   remainingSeconds: number;
   status: string;
+  viewerCount?: number;
 }
 
 export interface AuctionClosedMessage {

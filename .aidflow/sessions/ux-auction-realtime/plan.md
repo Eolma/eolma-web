@@ -93,34 +93,34 @@
 ## Implementation Items
 
 ### Phase 1: 기반 컴포넌트
-- [ ] 1-1: globals.css에 heartbeat keyframe 추가
-- [ ] 1-2: AuctionTimer 심박 효과 적용 (60초/30초 분기)
-- [ ] 1-3: LongPressButton 컴포넌트 생성 (SVG 프로그레스 링)
+- [x] 1-1: globals.css에 heartbeat keyframe 추가
+- [x] 1-2: AuctionTimer 심박 효과 적용 (60초/30초 분기)
+- [x] 1-3: LongPressButton 컴포넌트 생성 (SVG 프로그레스 링)
 
 ### Phase 2: 실시간 피드 & 축하
-- [ ] 2-1: BidCelebration 컴포넌트 생성 (canvas confetti)
-- [ ] 2-2: BidFeed 컴포넌트 생성 (슬라이드-인 피드)
-- [ ] 2-3: useAuctionSocket에 viewerCount state 추가, 타입 확장
+- [x] 2-1: BidCelebration 컴포넌트 생성 (canvas confetti)
+- [x] 2-2: BidFeed 컴포넌트 생성 (슬라이드-인 피드)
+- [x] 2-3: useAuctionSocket에 viewerCount state 추가, 타입 확장
 
 ### Phase 3: 종료 연출
-- [ ] 3-1: AuctionCountdown 오버레이 컴포넌트 생성
-- [ ] 3-2: 경매 종료 시 상태 전환 + grayscale 효과
+- [x] 3-1: AuctionCountdown 오버레이 컴포넌트 생성
+- [x] 3-2: 경매 종료 시 상태 전환 + grayscale 효과
 
 ### Phase 4: 통합 & 검증
-- [ ] 4-1: 경매 상세 페이지에 모든 컴포넌트 통합
-- [ ] 4-2: BidPanel에 LongPressButton 적용
-- [ ] 4-3: npm run build 확인
-- [ ] 4-4: 스모크 테스트 (입찰 성공/실패, 타이머, 종료 시나리오)
+- [x] 4-1: 경매 상세 페이지에 모든 컴포넌트 통합
+- [x] 4-2: BidPanel에 LongPressButton 적용
+- [x] 4-3: npm run build 확인
+- [x] 4-4: 스모크 테스트 (입찰 성공/실패, 타이머, 종료 시나리오)
 
 ## Acceptance Criteria
-- [ ] AC-1: 입찰 성공 시 confetti 파티클이 화면에 표시됨
-- [ ] AC-2: 마감 60초 이하에서 타이머가 pulse 효과를 보임
-- [ ] AC-3: 다른 사용자 입찰 시 슬라이드-인 피드가 나타남
-- [ ] AC-4: 입찰 버튼을 500ms 이상 누르면 입찰이 실행됨 (짧게 누르면 취소)
-- [ ] AC-5: viewerCount 필드가 있을 때 참여자 수가 표시됨
-- [ ] AC-6: 마지막 5초에 전체화면 카운트다운이 표시됨
-- [ ] AC-7: 경매 종료 시 화면이 grayscale로 전환되며 낙찰 결과가 표시됨
-- [ ] AC-8: npm run build 성공
+- [x] AC-1: 입찰 성공 시 confetti 파티클이 화면에 표시됨
+- [x] AC-2: 마감 60초 이하에서 타이머가 pulse 효과를 보임
+- [x] AC-3: 다른 사용자 입찰 시 슬라이드-인 피드가 나타남
+- [x] AC-4: 입찰 버튼을 500ms 이상 누르면 입찰이 실행됨 (짧게 누르면 취소)
+- [x] AC-5: viewerCount 필드가 있을 때 참여자 수가 표시됨
+- [x] AC-6: 마지막 5초에 전체화면 카운트다운이 표시됨
+- [x] AC-7: 경매 종료 시 화면이 grayscale로 전환되며 낙찰 결과가 표시됨
+- [x] AC-8: npm run build 성공
 
 ## Notes
 - framer-motion은 ux-motion 세션에서 설치하므로, 이 세션은 ux-motion 이후 또는 동시 진행 시 package.json 충돌 주의

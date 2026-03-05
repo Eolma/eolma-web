@@ -89,6 +89,12 @@ body {
   }
 }
 
+/* 타이머 심박 효과 */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* 접근성: 모션 축소 설정 존중 */
 @media (prefers-reduced-motion: reduce) {
   *,
