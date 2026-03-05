@@ -14,6 +14,16 @@ interface ScrollData {
  * 페이지별 스크롤 위치 복원 훅.
  * sessionStorage에 pathname별 scrollY와 로드된 페이지 수를 저장한다.
  * 무한 스크롤과 연계하여 복원 시 필요한 페이지 수를 함께 관리한다.
+ *
+ * Save 전략:
+ * - scroll 이벤트 발생 시 로컬 변수에 scrollY를 기록하되, 0은 무시한다.
+ *   (Next.js SPA 네비게이션 시 scroll-to-top이 발생해 0이 들어오는 것을 방지)
+ * - 150ms debounce로 sessionStorage에 기록한다.
+ * - pagehide(탭 전환, 앱 전환)와 cleanup(SPA 네비게이션) 시에도 저장한다.
+ *
+ * Restore 전략:
+ * - 페이지 컴포넌트에서 데이터 fetch 완료 후 restoreScroll()을 호출한다.
+ * - setTimeout(100ms) + rAF로 React 렌더링 완료를 대기한 뒤 scrollTo한다.
  */
 export function useScrollRestoration(loadedPages: number = 1) {
   const pathname = usePathname();
@@ -21,48 +31,43 @@ export function useScrollRestoration(loadedPages: number = 1) {
   const loadedPagesRef = useRef(loadedPages);
   loadedPagesRef.current = loadedPages;
 
-  // pathnameRef는 렌더 시 동기적으로 갱신된다.
-  // 네비게이션이 발생하면 React 렌더 단계에서 즉시 업데이트되므로,
-  // 이후 발생하는 scroll 이벤트(scroll-to-top 등)에서
-  // 이전 경로의 저장값이 덮어씌워지는 것을 방지할 수 있다.
-  const pathnameRef = useRef(pathname);
-  pathnameRef.current = pathname;
-
   useEffect(() => {
-    const capturedPathname = pathname;
-    let rafId: number | null = null;
+    const key = STORAGE_KEY_PREFIX + pathname;
+    // 마지막으로 관측된 유효한 scrollY (0 제외)
+    let lastScrollY = window.scrollY || 0;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-    function savePosition() {
-      // 네비게이션 중이면 저장하지 않음
-      // (pathnameRef는 렌더 시 이미 새 경로로 갱신됨)
-      if (pathnameRef.current !== capturedPathname) return;
-
-      const data: ScrollData = {
-        scrollY: window.scrollY,
-        loadedPages: loadedPagesRef.current,
-      };
+    function writeToStorage() {
+      if (lastScrollY <= 0) return;
       try {
-        sessionStorage.setItem(STORAGE_KEY_PREFIX + capturedPathname, JSON.stringify(data));
+        sessionStorage.setItem(
+          key,
+          JSON.stringify({ scrollY: lastScrollY, loadedPages: loadedPagesRef.current }),
+        );
       } catch {
         // sessionStorage 용량 초과 무시
       }
     }
 
     function handleScroll() {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        savePosition();
-        rafId = null;
-      });
+      const y = window.scrollY;
+      // scroll-to-top(SPA 네비게이션)은 무시하고 마지막 유효 위치만 보존
+      if (y > 0) {
+        lastScrollY = y;
+      }
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(writeToStorage, 150);
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("beforeunload", savePosition);
+    window.addEventListener("pagehide", writeToStorage);
 
     return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
+      if (debounceTimer) clearTimeout(debounceTimer);
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("beforeunload", savePosition);
+      window.removeEventListener("pagehide", writeToStorage);
+      // SPA 네비게이션 시 마지막 유효 위치 저장
+      writeToStorage();
     };
   }, [pathname]);
 
