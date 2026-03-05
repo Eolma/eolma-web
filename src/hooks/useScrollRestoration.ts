@@ -31,6 +31,19 @@ export function useScrollRestoration(loadedPages: number = 1) {
   const loadedPagesRef = useRef(loadedPages);
   loadedPagesRef.current = loadedPages;
 
+  // 마운트 시점에 저장된 데이터를 캐시 (scroll handler가 덮어쓰기 전에 확보)
+  const cachedData = useRef<ScrollData | null>(null);
+  const cachedDataLoaded = useRef(false);
+  if (!cachedDataLoaded.current) {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY_PREFIX + pathname);
+      cachedData.current = raw ? JSON.parse(raw) : null;
+    } catch {
+      cachedData.current = null;
+    }
+    cachedDataLoaded.current = true;
+  }
+
   useEffect(() => {
     const key = STORAGE_KEY_PREFIX + pathname;
     // 마지막으로 관측된 유효한 scrollY (0 제외)
@@ -38,6 +51,8 @@ export function useScrollRestoration(loadedPages: number = 1) {
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
     function writeToStorage() {
+      // 복원 완료 전에는 저장하지 않음 (race condition 방지)
+      if (!restored.current) return;
       if (lastScrollY <= 0) return;
       try {
         sessionStorage.setItem(
@@ -51,7 +66,6 @@ export function useScrollRestoration(loadedPages: number = 1) {
 
     function handleScroll() {
       const y = window.scrollY;
-      // scroll-to-top(SPA 네비게이션)은 무시하고 마지막 유효 위치만 보존
       if (y > 0) {
         lastScrollY = y;
       }
@@ -66,20 +80,13 @@ export function useScrollRestoration(loadedPages: number = 1) {
       if (debounceTimer) clearTimeout(debounceTimer);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("pagehide", writeToStorage);
-      // SPA 네비게이션 시 마지막 유효 위치 저장
       writeToStorage();
     };
   }, [pathname]);
 
-  /** 저장된 스크롤 데이터 가져오기 */
+  /** 저장된 스크롤 데이터 가져오기 (캐시된 값 반환) */
   function getSavedData(): ScrollData | null {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY_PREFIX + pathname);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
+    return cachedData.current;
   }
 
   /** 저장된 스크롤 위치로 복원 */
@@ -87,9 +94,8 @@ export function useScrollRestoration(loadedPages: number = 1) {
     if (restored.current) return;
     restored.current = true;
 
-    const data = getSavedData();
+    const data = cachedData.current;
     if (data && data.scrollY > 0) {
-      // React 렌더링 완료 대기 후 스크롤 복원
       setTimeout(() => {
         requestAnimationFrame(() => {
           window.scrollTo(0, data.scrollY);
