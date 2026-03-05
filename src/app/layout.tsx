@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { AuthInitializer } from "@/components/layout/AuthInitializer";
+import { PageTransition } from "@/components/common/PageTransition";
 
 export const metadata: Metadata = {
   title: "얼마 - 중고 경매 플랫폼",
@@ -49,7 +50,9 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col bg-bg text-text-primary">
         <AuthInitializer>
           <Header />
-          <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          <main className="flex-1 pb-16 md:pb-0">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <BottomNav />
         </AuthInitializer>

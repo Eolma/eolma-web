@@ -7,6 +7,7 @@ import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
 import { formatPrice } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { AnimatedPrice } from "@/components/common/AnimatedPrice";
 
 interface BidPanelProps {
   currentPrice: number;
@@ -56,7 +57,7 @@ export function BidPanel({
       {/* 현재 최고가 */}
       <div>
         <p className="text-xs text-text-secondary mb-1">현재 최고가</p>
-        <p className="text-2xl font-bold text-primary">{formatPrice(currentPrice)}</p>
+        <AnimatedPrice value={currentPrice} className="text-2xl font-bold text-primary" />
         <p className="text-sm text-text-secondary mt-1">입찰 수: {bidCount}회</p>
       </div>
 

@@ -6,6 +6,7 @@ import { AUCTION_STATUS_LABELS } from "@/types/auction";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
+import { AnimatedPrice } from "@/components/common/AnimatedPrice";
 
 interface AuctionCardProps {
   auction: AuctionResponse;
@@ -37,9 +38,7 @@ export function AuctionCard({ auction }: AuctionCardProps) {
         <div className="space-y-1.5">
           <div className="flex justify-between items-baseline">
             <span className="text-xs text-text-tertiary">현재가</span>
-            <span className="text-xl font-extrabold text-accent tabular-nums">
-              {formatPrice(auction.currentPrice)}
-            </span>
+            <AnimatedPrice value={auction.currentPrice} className="text-xl font-extrabold text-accent tabular-nums" />
           </div>
 
           {auction.instantPrice && (

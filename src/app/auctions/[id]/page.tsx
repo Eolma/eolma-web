@@ -16,6 +16,7 @@ import { getAuction, getBidHistory } from "@/lib/api/auctions";
 import { useAuctionSocket } from "@/lib/websocket/useAuctionSocket";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { AnimatedPrice } from "@/components/common/AnimatedPrice";
 import Link from "next/link";
 
 /** 경매 상태 -> Badge variant 매핑 */
@@ -194,7 +195,7 @@ export default function AuctionDetailPage() {
           <div className="flex items-center justify-between mb-2">
             <div>
               <p className="text-xs text-text-secondary">현재가</p>
-              <p className="text-lg font-bold text-primary">{formatPrice(currentPrice)}</p>
+              <AnimatedPrice value={currentPrice} className="text-lg font-bold text-primary" />
             </div>
             <AuctionTimer remainingSeconds={remainingSeconds} />
           </div>

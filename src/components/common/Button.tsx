@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonHTMLAttributes, forwardRef } from "react";
+import { ButtonHTMLAttributes, forwardRef, MouseEvent, useState, useCallback } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger" | "ghost";
@@ -22,12 +22,33 @@ const sizeStyles: Record<string, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = "primary", size = "md", loading, disabled, className = "", children, ...props }, ref) => {
+  ({ variant = "primary", size = "md", loading, disabled, className = "", children, onClick, ...props }, ref) => {
+    const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
+    const showRipple = variant !== "ghost";
+
+    const handleClick = useCallback(
+      (e: MouseEvent<HTMLButtonElement>) => {
+        if (showRipple) {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const id = Date.now();
+          setRipples((prev) => [...prev, { x, y, id }]);
+          setTimeout(() => {
+            setRipples((prev) => prev.filter((r) => r.id !== id));
+          }, 600);
+        }
+        onClick?.(e);
+      },
+      [onClick, showRipple],
+    );
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
         className={`
+          relative overflow-hidden
           inline-flex items-center justify-center font-medium rounded-lg
           focus:outline-none focus:ring-2 focus:ring-offset-2
           disabled:opacity-50 disabled:cursor-not-allowed
@@ -35,6 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           active:scale-[0.97]
           ${variantStyles[variant]} ${sizeStyles[size]} ${className}
         `}
+        onClick={handleClick}
         {...props}
       >
         {loading && (
@@ -44,6 +66,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           </svg>
         )}
         {children}
+        {ripples.map((ripple) => (
+          <span
+            key={ripple.id}
+            className="absolute rounded-full bg-current opacity-20 animate-[ripple_0.6s_ease-out_forwards] pointer-events-none"
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              width: 10,
+              height: 10,
+              marginLeft: -5,
+              marginTop: -5,
+            }}
+          />
+        ))}
       </button>
     );
   },
