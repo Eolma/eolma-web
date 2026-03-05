@@ -60,6 +60,7 @@ export interface AuctionUpdateMessage {
   remainingSeconds: number;
   status: string;
   viewerCount?: number;
+  bidderNickname?: string;
 }
 
 export interface AuctionClosedMessage {

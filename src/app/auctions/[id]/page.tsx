@@ -113,6 +113,7 @@ export default function AuctionDetailPage() {
     const newItem: BidFeedItem = {
       id: `${Date.now()}-${Math.random()}`,
       amount: lastMessage.currentPrice,
+      nickname: lastMessage.bidderNickname || "익명",
       timestamp: Date.now(),
     };
     setFeedItems((prev) => {

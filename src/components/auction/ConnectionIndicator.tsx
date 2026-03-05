@@ -17,7 +17,13 @@ const statusConfig: Record<ConnectionStatus, { color: string; pulse: boolean; la
 export function ConnectionIndicator({ status, onReconnect }: ConnectionIndicatorProps) {
   const config = statusConfig[status];
 
-  if (status === "connected") return null;
+  if (status === "connected") {
+    return (
+      <div className="flex items-center gap-1.5">
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2 bg-bg-secondary px-3 py-2 rounded-lg text-sm">

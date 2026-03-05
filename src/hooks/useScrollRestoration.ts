@@ -61,10 +61,12 @@ export function useScrollRestoration(loadedPages: number = 1) {
 
     const data = getSavedData();
     if (data && data.scrollY > 0) {
-      // requestAnimationFrame으로 DOM 렌더링 완료 후 복원
-      requestAnimationFrame(() => {
-        window.scrollTo(0, data.scrollY);
-      });
+      // React 렌더링 완료 대기 후 스크롤 복원
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, data.scrollY);
+        });
+      }, 100);
     }
   }
 

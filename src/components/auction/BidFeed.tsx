@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/utils/format";
 export interface BidFeedItem {
   id: string;
   amount: number;
+  nickname: string;
   timestamp: number;
 }
 
@@ -30,7 +31,7 @@ export function BidFeed({ items }: BidFeedProps) {
             className="bg-bg/90 backdrop-blur-sm border border-border rounded-lg px-3 py-2 shadow-md"
           >
             <p className="text-sm text-text-primary">
-              <span className="text-text-secondary">누군가</span>{" "}
+              <span className="text-text-secondary">{item.nickname}</span>{" "}
               <span className="font-bold text-primary">{formatPrice(item.amount)}</span>
               <span className="text-text-secondary">에 입찰</span>
             </p>
