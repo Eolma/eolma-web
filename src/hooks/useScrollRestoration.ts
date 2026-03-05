@@ -21,9 +21,13 @@ export function useScrollRestoration(loadedPages: number = 1) {
   const loadedPagesRef = useRef(loadedPages);
   loadedPagesRef.current = loadedPages;
 
-  // 스크롤 위치 저장 (페이지 이탈 시)
+  // scroll 이벤트로 지속적으로 위치 추적 (rAF throttle)
+  // App Router에서는 cleanup 시점에 scrollY가 이미 변경되므로,
+  // 스크롤할 때마다 최신 위치를 저장해둔다.
   useEffect(() => {
-    function handleSave() {
+    let rafId: number | null = null;
+
+    function savePosition() {
       const data: ScrollData = {
         scrollY: window.scrollY,
         loadedPages: loadedPagesRef.current,
@@ -35,11 +39,21 @@ export function useScrollRestoration(loadedPages: number = 1) {
       }
     }
 
-    window.addEventListener("beforeunload", handleSave);
+    function handleScroll() {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        savePosition();
+        rafId = null;
+      });
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("beforeunload", savePosition);
+
     return () => {
-      // cleanup 시 현재 스크롤 저장 (SPA 네비게이션)
-      handleSave();
-      window.removeEventListener("beforeunload", handleSave);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("beforeunload", savePosition);
     };
   }, [pathname]);
 
