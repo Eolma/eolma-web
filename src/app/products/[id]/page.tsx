@@ -11,6 +11,7 @@ import { CATEGORY_LABELS, CONDITION_LABELS, PRODUCT_STATUS_LABELS, END_TYPE_LABE
 import { getProduct, activateProduct, deleteProduct } from "@/lib/api/products";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { ImageGallery } from "@/components/common/ImageGallery";
 
 /** 상품 상태 -> Badge variant 매핑 */
 const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
@@ -28,7 +29,6 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<ProductResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   const id = Number(params.id);
 
@@ -80,48 +80,7 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 이미지 영역 */}
         <div>
-          {product.imageUrls && product.imageUrls.length > 0 ? (
-            <div className="space-y-3">
-              <div className="aspect-square bg-bg-tertiary rounded-xl overflow-hidden">
-                {failedImages.has(0) ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-text-tertiary text-sm">이미지를 불러올 수 없습니다</span>
-                  </div>
-                ) : (
-                  <img
-                    src={product.imageUrls[0]}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                    onError={() => setFailedImages((prev) => new Set(prev).add(0))}
-                  />
-                )}
-              </div>
-              {product.imageUrls.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {product.imageUrls.slice(1).map((url, i) => (
-                    <div key={i} className="aspect-square bg-bg-tertiary rounded-lg overflow-hidden">
-                      {failedImages.has(i + 1) ? (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-text-tertiary text-xs">불러올 수 없음</span>
-                        </div>
-                      ) : (
-                        <img
-                          src={url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                          onError={() => setFailedImages((prev) => new Set(prev).add(i + 1))}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="aspect-square bg-bg-tertiary rounded-xl flex items-center justify-center text-text-tertiary">
-              이미지 없음
-            </div>
-          )}
+          <ImageGallery images={product.imageUrls ?? []} alt={product.title} />
         </div>
 
         {/* 상품 정보 */}

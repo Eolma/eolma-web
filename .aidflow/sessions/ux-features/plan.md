@@ -97,34 +97,34 @@
 ## Implementation Items
 
 ### Phase 1: 입찰 편의 기능
-- [ ] 1-1: BidPanel에 가격 프리셋 버튼 (+1,000/+5,000/+10,000/+50,000) 추가
-- [ ] 1-2: ShareButton 컴포넌트 생성 + 경매 상세 페이지에 적용
+- [x] 1-1: BidPanel에 가격 프리셋 버튼 (+1,000/+5,000/+10,000/+50,000) 추가
+- [x] 1-2: ShareButton 컴포넌트 생성 + 경매 상세 페이지에 적용
 
 ### Phase 2: 이미지 갤러리
-- [ ] 2-1: ImageGallery 컴포넌트 생성 (메인 + 썸네일)
-- [ ] 2-2: ImageLightbox 컴포넌트 생성 (전체화면 + 핀치 줌 + 스와이프)
-- [ ] 2-3: 상품 상세 페이지에 ImageGallery 적용
+- [x] 2-1: ImageGallery 컴포넌트 생성 (메인 + 썸네일)
+- [x] 2-2: ImageLightbox 컴포넌트 생성 (전체화면 + 핀치 줌 + 스와이프)
+- [x] 2-3: 상품 상세 페이지에 ImageGallery 적용
 
 ### Phase 3: 찜 기능
-- [ ] 3-1: useWishlistStore 생성 (Zustand persist)
-- [ ] 3-2: WishlistButton 컴포넌트 생성 (Heart 토글 + bounce)
-- [ ] 3-3: AuctionCard, 경매 상세 페이지에 WishlistButton 적용
+- [x] 3-1: useWishlistStore 생성 (Zustand persist)
+- [x] 3-2: WishlistButton 컴포넌트 생성 (Heart 토글 + bounce)
+- [x] 3-3: AuctionCard, 경매 상세 페이지에 WishlistButton 적용
 
 ### Phase 4: 히어로 캐러셀
-- [ ] 4-1: HeroCarousel 컴포넌트 생성 (자동 슬라이드 + 수동 스와이프)
-- [ ] 4-2: 홈 페이지에 HeroCarousel 적용
+- [x] 4-1: HeroCarousel 컴포넌트 생성 (자동 슬라이드 + 수동 스와이프)
+- [x] 4-2: 홈 페이지에 HeroCarousel 적용
 
 ### Phase 5: 검증
-- [ ] 5-1: npm run build 확인
-- [ ] 5-2: 스모크 테스트 (갤러리, 프리셋, 공유, 찜, 캐러셀)
+- [x] 5-1: npm run build 확인
+- [x] 5-2: 스모크 테스트 (갤러리, 프리셋, 공유, 찜, 캐러셀)
 
 ## Acceptance Criteria
-- [ ] AC-1: 상품 이미지 클릭 시 전체화면 갤러리가 열리고 스와이프/줌 가능
-- [ ] AC-2: 입찰 패널에 프리셋 버튼이 표시되고 클릭 시 금액이 증가함
-- [ ] AC-3: 공유 버튼 클릭 시 네이티브 공유 또는 URL 복사 실행
-- [ ] AC-4: 하트 버튼으로 경매를 찜할 수 있고 새로고침 후에도 유지됨
-- [ ] AC-5: 홈 상단에 인기 경매 캐러셀이 자동 슬라이드됨
-- [ ] AC-6: npm run build 성공
+- [x] AC-1: 상품 이미지 클릭 시 전체화면 갤러리가 열리고 스와이프/줌 가능
+- [x] AC-2: 입찰 패널에 프리셋 버튼이 표시되고 클릭 시 금액이 증가함
+- [x] AC-3: 공유 버튼 클릭 시 네이티브 공유 또는 URL 복사 실행
+- [x] AC-4: 하트 버튼으로 경매를 찜할 수 있고 새로고침 후에도 유지됨
+- [x] AC-5: 홈 상단에 인기 경매 캐러셀이 자동 슬라이드됨
+- [x] AC-6: npm run build 성공
 
 ## Notes
 - 이미지 갤러리 핀치 줌은 외부 라이브러리 없이 직접 구현 (SPEC.md 외부 UI 라이브러리 금지)

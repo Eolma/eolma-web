@@ -7,6 +7,7 @@ import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { Card } from "@/components/common/Card";
 import { Badge } from "@/components/common/Badge";
 import { AnimatedPrice } from "@/components/common/AnimatedPrice";
+import { WishlistButton } from "@/components/auction/WishlistButton";
 
 interface AuctionCardProps {
   auction: AuctionResponse;
@@ -30,9 +31,12 @@ export function AuctionCard({ auction }: AuctionCardProps) {
           <h3 className="text-base font-semibold text-text-primary truncate group-hover:text-primary flex-1 mr-2">
             {auction.title}
           </h3>
-          <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
-            {AUCTION_STATUS_LABELS[auction.status] || auction.status}
-          </Badge>
+          <div className="flex items-center gap-1 shrink-0">
+            <WishlistButton auctionId={auction.id} />
+            <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
+              {AUCTION_STATUS_LABELS[auction.status] || auction.status}
+            </Badge>
+          </div>
         </div>
 
         <div className="space-y-1.5">
