@@ -94,33 +94,33 @@ Pull-to-refresh, 무한 스크롤, 스와이프 뒤로가기, 스크롤 복원, 
 ## Implementation Items
 
 ### Phase 1: 커스텀 훅 생성
-- [ ] 1-1: useInfiniteScroll 훅 생성 (IntersectionObserver)
-- [ ] 1-2: usePullToRefresh 훅 생성 (touch 이벤트)
-- [ ] 1-3: useScrollRestoration 훅 생성 (sessionStorage)
-- [ ] 1-4: useSwipeBack 훅 생성 (edge swipe 감지)
+- [x] 1-1: useInfiniteScroll 훅 생성 (IntersectionObserver)
+- [x] 1-2: usePullToRefresh 훅 생성 (touch 이벤트)
+- [x] 1-3: useScrollRestoration 훅 생성 (sessionStorage)
+- [x] 1-4: useSwipeBack 훅 생성 (edge swipe 감지)
 
 ### Phase 2: UI 컴포넌트
-- [ ] 2-1: PullToRefresh UI 컴포넌트 생성 (스피너 + 텍스트)
-- [ ] 2-2: FloatingActionButton 컴포넌트 생성 (확장/축소)
-- [ ] 2-3: BottomNav에서 "등록" 탭 제거, 홈/마이 2탭으로 변경
+- [x] 2-1: PullToRefresh UI 컴포넌트 생성 (스피너 + 텍스트)
+- [x] 2-2: FloatingActionButton 컴포넌트 생성 (확장/축소)
+- [x] 2-3: BottomNav에서 "등록" 탭 제거, 홈/마이 2탭으로 변경
 
 ### Phase 3: 페이지 적용
-- [ ] 3-1: 홈 페이지에 무한 스크롤 + Pull-to-refresh 적용
-- [ ] 3-2: 경매 목록 페이지에 무한 스크롤 + Pull-to-refresh 적용
-- [ ] 3-3: layout.tsx에 SwipeBack + FAB + 스크롤 복원 적용
+- [x] 3-1: 홈 페이지에 무한 스크롤 + Pull-to-refresh 적용
+- [x] 3-2: 경매 목록 페이지에 무한 스크롤 + Pull-to-refresh 적용
+- [x] 3-3: layout.tsx에 SwipeBack + FAB + 스크롤 복원 적용
 
 ### Phase 4: 검증
-- [ ] 4-1: npm run build 확인
-- [ ] 4-2: 스모크 테스트 (스크롤, 새로고침, 뒤로가기, FAB)
+- [x] 4-1: npm run build 확인
+- [x] 4-2: 스모크 테스트 (스크롤, 새로고침, 뒤로가기, FAB)
 
 ## Acceptance Criteria
-- [ ] AC-1: 모바일에서 목록을 아래로 당기면 새로고침됨
-- [ ] AC-2: 목록 하단 도달 시 자동으로 다음 페이지 로드됨
-- [ ] AC-3: 모바일 좌측 가장자리에서 우측 스와이프 시 뒤로가기됨
-- [ ] AC-4: 목록 → 상세 → 뒤로가기 시 이전 스크롤 위치로 복원됨
-- [ ] AC-5: 우하단에 FAB이 표시되고 클릭 시 상품 등록 페이지로 이동함
-- [ ] AC-6: FAB이 스크롤 방향에 따라 확장/축소됨
-- [ ] AC-7: npm run build 성공
+- [x] AC-1: 모바일에서 목록을 아래로 당기면 새로고침됨
+- [x] AC-2: 목록 하단 도달 시 자동으로 다음 페이지 로드됨
+- [x] AC-3: 모바일 좌측 가장자리에서 우측 스와이프 시 뒤로가기됨
+- [x] AC-4: 목록 → 상세 → 뒤로가기 시 이전 스크롤 위치로 복원됨
+- [x] AC-5: 우하단에 FAB이 표시되고 클릭 시 상품 등록 페이지로 이동함
+- [x] AC-6: FAB이 스크롤 방향에 따라 확장/축소됨
+- [x] AC-7: npm run build 성공
 
 ## Notes
 - 무한 스크롤로 전환 시 기존 "페이지 N" 표시와 이전/다음 버튼은 완전히 제거
