@@ -72,6 +72,13 @@ export default function AuctionDetailPage() {
     return { status: msg.status };
   }, [lastMessage]);
 
+  // 입찰 성공 시 입찰 이력 자동 갱신
+  useEffect(() => {
+    if (lastBidResult?.status === "ACCEPTED") {
+      getBidHistory(id).then(setBids).catch(() => {});
+    }
+  }, [lastBidResult, id]);
+
   if (loading || !auction) return <Loading />;
 
   const isWinner = auction.winnerId === user?.id;

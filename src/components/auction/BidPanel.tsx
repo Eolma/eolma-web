@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { formatPrice } from "@/lib/utils/format";
@@ -30,6 +30,10 @@ export function BidPanel({
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const nextMinBid = currentPrice + minBidUnit;
   const [bidAmount, setBidAmount] = useState(String(nextMinBid));
+
+  useEffect(() => {
+    setBidAmount(String(nextMinBid));
+  }, [nextMinBid]);
 
   function handleBid(e: FormEvent) {
     e.preventDefault();

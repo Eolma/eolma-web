@@ -17,6 +17,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<ProductResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   const id = Number(params.id);
 
@@ -71,17 +72,35 @@ export default function ProductDetailPage() {
           {product.imageUrls.length > 0 ? (
             <div className="space-y-3">
               <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden">
-                <img
-                  src={product.imageUrls[0]}
-                  alt={product.title}
-                  className="w-full h-full object-cover"
-                />
+                {failedImages.has(0) ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-gray-400 text-sm">이미지를 불러올 수 없습니다</span>
+                  </div>
+                ) : (
+                  <img
+                    src={product.imageUrls[0]}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                    onError={() => setFailedImages((prev) => new Set(prev).add(0))}
+                  />
+                )}
               </div>
               {product.imageUrls.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {product.imageUrls.slice(1).map((url, i) => (
                     <div key={i} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      {failedImages.has(i + 1) ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-gray-400 text-xs">불러올 수 없음</span>
+                        </div>
+                      ) : (
+                        <img
+                          src={url}
+                          alt=""
+                          className="w-full h-full object-cover"
+                          onError={() => setFailedImages((prev) => new Set(prev).add(i + 1))}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
