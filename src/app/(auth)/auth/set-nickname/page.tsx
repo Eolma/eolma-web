@@ -47,14 +47,14 @@ export default function SetNicknamePage() {
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
       <div className="w-full max-w-sm mx-auto px-4">
-        <h1 className="text-2xl font-bold text-center mb-2">닉네임 설정</h1>
-        <p className="text-sm text-gray-500 text-center mb-8">
+        <h1 className="text-2xl font-bold text-text-primary text-center mb-2">닉네임 설정</h1>
+        <p className="text-sm text-text-secondary text-center mb-8">
           서비스에서 사용할 닉네임을 입력해주세요.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+            <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -68,7 +68,7 @@ export default function SetNicknamePage() {
             minLength={2}
             maxLength={20}
           />
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" size="lg" loading={loading} className="w-full">
             시작하기
           </Button>
         </form>

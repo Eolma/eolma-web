@@ -31,9 +31,9 @@ export default function MyProductsPage() {
   }, [page]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">내 상품</h1>
+        <h1 className="text-2xl font-bold text-text-primary">내 상품</h1>
         <Link href="/products/new">
           <Button>상품 등록</Button>
         </Link>
@@ -48,7 +48,7 @@ export default function MyProductsPage() {
             <Button variant="secondary" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
               이전
             </Button>
-            <span className="flex items-center text-sm text-gray-500">{page + 1} 페이지</span>
+            <span className="flex items-center text-sm text-text-secondary">{page + 1} 페이지</span>
             <Button variant="secondary" disabled={!hasNext} onClick={() => setPage((p) => p + 1)}>
               다음
             </Button>

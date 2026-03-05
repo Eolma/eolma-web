@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loading } from "@/components/common/Loading";
+import { Card } from "@/components/common/Card";
 import { PaymentWidget } from "@/components/payment/PaymentWidget";
 import type { PaymentResponse } from "@/types/payment";
 import { getPaymentByAuction } from "@/lib/api/payments";
@@ -40,29 +41,31 @@ export default function PaymentPage() {
   if (error || !payment) {
     return (
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <p className="text-gray-500">{error || "결제 정보를 찾을 수 없습니다."}</p>
+        <p className="text-text-secondary">{error || "결제 정보를 찾을 수 없습니다."}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-lg mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">결제</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-6">결제</h1>
 
-      <div className="bg-gray-50 rounded-xl p-5 mb-6 space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-500">주문번호</span>
-          <span className="font-mono text-gray-700">{payment.tossOrderId}</span>
+      <Card className="mb-6">
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-text-secondary">주문번호</span>
+            <span className="font-mono text-text-primary">{payment.tossOrderId}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-text-secondary">결제 금액</span>
+            <span className="text-lg font-bold text-primary">{formatPrice(payment.amount)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-text-secondary">결제 기한</span>
+            <span className="text-text-primary">{formatDateTime(payment.deadlineAt)}</span>
+          </div>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-500">결제 금액</span>
-          <span className="text-lg font-bold text-indigo-600">{formatPrice(payment.amount)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-500">결제 기한</span>
-          <span className="text-gray-700">{formatDateTime(payment.deadlineAt)}</span>
-        </div>
-      </div>
+      </Card>
 
       <PaymentWidget
         orderId={payment.tossOrderId}

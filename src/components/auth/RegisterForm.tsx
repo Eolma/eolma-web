@@ -44,9 +44,9 @@ export function RegisterForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+          <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
@@ -83,7 +83,7 @@ export function RegisterForm() {
           placeholder="비밀번호를 다시 입력하세요"
           required
         />
-        <Button type="submit" loading={loading} className="w-full">
+        <Button type="submit" size="lg" loading={loading} className="w-full">
           회원가입
         </Button>
       </form>

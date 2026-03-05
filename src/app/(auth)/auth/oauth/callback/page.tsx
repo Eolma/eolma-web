@@ -36,18 +36,15 @@ function OAuthCallbackContent() {
         const res = await oauthLogin(provider, code);
 
         if (res.linkInfo) {
-          // 계정 연결 필요
           setLinkInfo(res.linkInfo);
           return;
         }
 
         if (res.nicknameRequired) {
-          // 신규 소셜 가입 -> 닉네임 설정
           router.replace("/auth/set-nickname");
           return;
         }
 
-        // 로그인 성공
         router.replace("/");
       } catch (err) {
         if (err instanceof ApiException) {
@@ -77,10 +74,10 @@ function OAuthCallbackContent() {
     return (
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
         <div className="text-center max-w-sm mx-auto px-4">
-          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-error mb-4">{error}</p>
           <button
             onClick={() => router.replace("/login")}
-            className="text-indigo-600 hover:underline text-sm"
+            className="text-primary hover:underline text-sm"
           >
             로그인 페이지로 돌아가기
           </button>

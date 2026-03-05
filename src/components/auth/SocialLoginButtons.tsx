@@ -50,24 +50,26 @@ export function SocialLoginButtons() {
       {/* 구분선 */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-400">또는</span>
+          <span className="bg-bg px-4 text-text-tertiary">또는</span>
         </div>
       </div>
 
       {/* 소셜 로그인 버튼 */}
       <div className="space-y-3">
+        {/* Google - 브랜드 색상 예외 유지 */}
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-border rounded-lg text-sm font-medium text-text-primary bg-bg-elevated hover:bg-bg-secondary transition-colors"
         >
           <GoogleIcon />
           Google로 계속하기
         </button>
 
+        {/* Kakao - 브랜드 색상 예외 유지 */}
         <button
           type="button"
           onClick={handleKakaoLogin}

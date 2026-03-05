@@ -52,18 +52,18 @@ export function AccountLinkModal({ linkInfo, onSuccess, onCancel }: AccountLinkM
   return (
     <Modal isOpen onClose={onCancel} title="기존 계정 연결">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-text-secondary">
           <p>
-            <span className="font-medium text-gray-900">{linkInfo.email}</span>
+            <span className="font-medium text-text-primary">{linkInfo.email}</span>
             은(는) 이미{" "}
-            <span className="font-medium text-indigo-600">{existingMethods}</span>
+            <span className="font-medium text-primary">{existingMethods}</span>
             (으)로 가입되어 있습니다.
           </p>
           <p className="mt-2">기존 계정에 소셜 로그인을 연결하시겠습니까?</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+          <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
