@@ -18,10 +18,46 @@ export interface LoginResponse {
 export interface MemberResponse {
   id: number;
   email: string;
-  nickname: string;
+  nickname: string | null;
   profileImage: string | null;
   role: string;
   status: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// OAuth
+export type AuthProvider = "LOCAL" | "GOOGLE" | "KAKAO";
+
+export interface OAuthLoginRequest {
+  provider: AuthProvider;
+  code: string;
+  redirectUri: string;
+}
+
+export interface OAuthLinkRequest {
+  linkToken: string;
+  password?: string;
+}
+
+export interface SetNicknameRequest {
+  nickname: string;
+}
+
+export interface AccountLinkInfo {
+  linkToken: string;
+  email: string;
+  existingProviders: AuthProvider[];
+  hasPassword: boolean;
+}
+
+export interface OAuthLoginResponse {
+  tokens?: LoginResponse;
+  nicknameRequired?: boolean;
+  linkInfo?: AccountLinkInfo;
+}
+
+export interface LinkedAccount {
+  provider: AuthProvider;
+  linkedAt: string;
 }

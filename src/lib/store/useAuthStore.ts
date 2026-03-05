@@ -1,9 +1,10 @@
 "use client";
 
 import { create } from "zustand";
-import type { MemberResponse } from "@/types/user";
+import type { MemberResponse, OAuthLoginResponse, AuthProvider } from "@/types/user";
 import { getAccessToken, setTokens, clearTokens } from "../utils/token";
 import * as authApi from "../api/auth";
+import { getRedirectUri } from "../oauth/config";
 
 interface AuthState {
   user: MemberResponse | null;
@@ -15,6 +16,11 @@ interface AuthState {
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
   initialize: () => Promise<void>;
+
+  // OAuth
+  oauthLogin: (provider: Exclude<AuthProvider, "LOCAL">, code: string) => Promise<OAuthLoginResponse>;
+  linkAccount: (linkToken: string, password?: string) => Promise<void>;
+  setNickname: (nickname: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -66,5 +72,37 @@ export const useAuthStore = create<AuthState>((set) => ({
       clearTokens();
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
+  },
+
+  // OAuth
+  oauthLogin: async (provider, code) => {
+    const res = await authApi.oauthLogin({
+      provider,
+      code,
+      redirectUri: getRedirectUri(),
+    });
+
+    // 토큰이 있으면 저장 + 사용자 정보 로드
+    if (res.tokens) {
+      setTokens(res.tokens.accessToken, res.tokens.refreshToken);
+      const user = await authApi.getMyProfile();
+      set({ user, isAuthenticated: true });
+    }
+
+    return res;
+  },
+
+  linkAccount: async (linkToken, password) => {
+    const res = await authApi.linkAccount({ linkToken, password });
+    setTokens(res.accessToken, res.refreshToken);
+    const user = await authApi.getMyProfile();
+    set({ user, isAuthenticated: true });
+  },
+
+  setNickname: async (nickname) => {
+    const res = await authApi.setNickname({ nickname });
+    setTokens(res.accessToken, res.refreshToken);
+    const user = await authApi.getMyProfile();
+    set({ user, isAuthenticated: true });
   },
 }));

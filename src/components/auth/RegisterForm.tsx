@@ -6,6 +6,7 @@ import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { ApiException } from "@/lib/api/client";
+import { SocialLoginButtons } from "./SocialLoginButtons";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -42,48 +43,51 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
-          {error}
-        </div>
-      )}
-      <Input
-        label="이메일"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="example@email.com"
-        required
-      />
-      <Input
-        label="닉네임"
-        type="text"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
-        placeholder="닉네임을 입력하세요"
-        required
-      />
-      <Input
-        label="비밀번호"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="비밀번호를 입력하세요"
-        required
-        minLength={8}
-      />
-      <Input
-        label="비밀번호 확인"
-        type="password"
-        value={passwordConfirm}
-        onChange={(e) => setPasswordConfirm(e.target.value)}
-        placeholder="비밀번호를 다시 입력하세요"
-        required
-      />
-      <Button type="submit" loading={loading} className="w-full">
-        회원가입
-      </Button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+        <Input
+          label="이메일"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="example@email.com"
+          required
+        />
+        <Input
+          label="닉네임"
+          type="text"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          placeholder="닉네임을 입력하세요"
+          required
+        />
+        <Input
+          label="비밀번호"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호를 입력하세요"
+          required
+          minLength={8}
+        />
+        <Input
+          label="비밀번호 확인"
+          type="password"
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
+          placeholder="비밀번호를 다시 입력하세요"
+          required
+        />
+        <Button type="submit" loading={loading} className="w-full">
+          회원가입
+        </Button>
+      </form>
+      <SocialLoginButtons />
+    </div>
   );
 }
