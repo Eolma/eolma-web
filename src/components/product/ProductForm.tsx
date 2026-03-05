@@ -17,6 +17,7 @@ import {
 import type { RegisterProductRequest } from "@/types/product";
 import { registerProduct, activateProduct } from "@/lib/api/products";
 import { ApiException } from "@/lib/api/client";
+import { FormProgress } from "@/components/common/FormProgress";
 
 export function ProductForm() {
   const router = useRouter();
@@ -85,6 +86,20 @@ export function ProductForm() {
 
   return (
     <form className="space-y-6">
+      {/* 폼 진행률 */}
+      <FormProgress
+        title={title}
+        description={description}
+        category={category}
+        conditionGrade={conditionGrade}
+        startingPrice={startingPrice}
+        endType={endType}
+        endValue={endValue}
+        imageUrls={imageUrls}
+        instantPrice={instantPrice}
+        reservePrice={reservePrice}
+      />
+
       {/* 에러 메시지 */}
       {error && (
         <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">{error}</div>

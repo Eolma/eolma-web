@@ -1,6 +1,7 @@
 "use client";
 
 import { useToastStore } from "@/lib/store/useToastStore";
+import { AnimatePresence, motion } from "framer-motion";
 
 /** 토스트 타입별 스타일 */
 const typeStyles: Record<string, string> = {
@@ -18,38 +19,60 @@ const typeIcons: Record<string, string> = {
   info: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
 };
 
+const SWIPE_THRESHOLD = 80;
+
 /** 전역 토스트 컨테이너 - layout.tsx에 배치 */
 export function ToastProvider() {
   const { toasts, removeToast } = useToastStore();
 
-  if (toasts.length === 0) return null;
-
   return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={`
-            pointer-events-auto flex items-start gap-3 px-4 py-3
-            rounded-lg border shadow-md
-            animate-[slideIn_0.2s_ease-out]
-            ${typeStyles[toast.type]}
-          `}
-        >
-          <svg className="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d={typeIcons[toast.type]} />
-          </svg>
-          <p className="text-sm flex-1">{toast.message}</p>
-          <button
-            onClick={() => removeToast(toast.id)}
-            className="shrink-0 text-current opacity-50 hover:opacity-100"
+    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[100] flex flex-col-reverse gap-2 w-full max-w-sm px-4 pointer-events-none">
+      <AnimatePresence mode="popLayout">
+        {toasts.map((toast) => (
+          <motion.div
+            key={toast.id}
+            layout
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 200, scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.5}
+            onDragEnd={(_, info) => {
+              if (Math.abs(info.offset.x) > SWIPE_THRESHOLD || Math.abs(info.velocity.x) > 500) {
+                removeToast(toast.id);
+              }
+            }}
+            className={`
+              pointer-events-auto flex items-start gap-3 px-4 py-3
+              rounded-lg border shadow-md cursor-grab active:cursor-grabbing
+              ${typeStyles[toast.type]}
+            `}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={typeIcons[toast.type]} />
             </svg>
-          </button>
-        </div>
-      ))}
+            <p className="text-sm flex-1">{toast.message}</p>
+            {toast.action && (
+              <button
+                onClick={toast.action.onClick}
+                className="shrink-0 text-sm font-medium underline underline-offset-2"
+              >
+                {toast.action.label}
+              </button>
+            )}
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="shrink-0 text-current opacity-50 hover:opacity-100"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

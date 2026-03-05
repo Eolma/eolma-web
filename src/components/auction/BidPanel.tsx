@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
+import { LongPressButton } from "@/components/auction/LongPressButton";
+import { ConnectionIndicator } from "@/components/auction/ConnectionIndicator";
 import { formatPrice } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { AnimatedPrice } from "@/components/common/AnimatedPrice";
+import type { ConnectionStatus } from "@/lib/websocket/useAuctionSocket";
+
+const BID_PRESETS = [1_000, 5_000, 10_000, 50_000];
 
 interface BidPanelProps {
   currentPrice: number;
@@ -15,9 +20,11 @@ interface BidPanelProps {
   instantPrice: number | null;
   bidCount: number;
   isActive: boolean;
-  isConnected: boolean;
+  connectionStatus: ConnectionStatus;
   onBid: (amount: number) => void;
   lastBidResult?: { status: string; message?: string } | null;
+  isPending?: boolean;
+  onReconnect?: () => void;
 }
 
 export function BidPanel({
@@ -26,11 +33,14 @@ export function BidPanel({
   instantPrice,
   bidCount,
   isActive,
-  isConnected,
+  connectionStatus,
   onBid,
   lastBidResult,
+  isPending = false,
+  onReconnect,
 }: BidPanelProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isConnected = connectionStatus === "connected";
   const nextMinBid = currentPrice + minBidUnit;
   const [bidAmount, setBidAmount] = useState(String(nextMinBid));
 
@@ -38,8 +48,7 @@ export function BidPanel({
     setBidAmount(String(nextMinBid));
   }, [nextMinBid]);
 
-  function handleBid(e: FormEvent) {
-    e.preventDefault();
+  function handleBid() {
     const amount = Number(bidAmount);
     if (amount >= nextMinBid) {
       onBid(amount);
@@ -61,12 +70,8 @@ export function BidPanel({
         <p className="text-sm text-text-secondary mt-1">입찰 수: {bidCount}회</p>
       </div>
 
-      {/* 연결 상태 안내 */}
-      {!isConnected && (
-        <div className="bg-warning-light text-warning-text text-sm px-3 py-2 rounded-lg">
-          서버 연결 중...
-        </div>
-      )}
+      {/* 연결 상태 표시 */}
+      <ConnectionIndicator status={connectionStatus} onReconnect={onReconnect} />
 
       {/* 입찰 거절 알림 */}
       {lastBidResult && lastBidResult.status === "REJECTED" && (
@@ -85,7 +90,7 @@ export function BidPanel({
       {/* 입찰 폼 (로그인 + 활성 경매) */}
       {isActive && isAuthenticated && (
         <>
-          <form onSubmit={handleBid} className="space-y-3">
+          <div className="space-y-3">
             <Input
               label="입찰가"
               type="number"
@@ -94,27 +99,45 @@ export function BidPanel({
               min={nextMinBid}
               step={minBidUnit}
             />
+            {/* 가격 프리셋 버튼 */}
+            <div className="flex gap-2 overflow-x-auto">
+              {BID_PRESETS.map((preset) => (
+                <Button
+                  key={preset}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="shrink-0 text-xs"
+                  onClick={() => {
+                    const next = Math.max(Number(bidAmount) + preset, nextMinBid);
+                    setBidAmount(String(next));
+                  }}
+                >
+                  +{preset.toLocaleString()}
+                </Button>
+              ))}
+            </div>
             <p className="text-xs text-text-secondary">
               최소 입찰가: {formatPrice(nextMinBid)}
             </p>
-            <Button
-              type="submit"
+            <LongPressButton
               className="w-full"
-              disabled={!isConnected || Number(bidAmount) < nextMinBid}
+              disabled={!isConnected || Number(bidAmount) < nextMinBid || isPending}
+              onConfirm={handleBid}
             >
-              입찰하기
-            </Button>
-          </form>
+              {isPending ? "입찰 처리 중..." : "꾹 눌러 입찰하기"}
+            </LongPressButton>
+          </div>
 
           {instantPrice && (
-            <Button
+            <LongPressButton
               variant="secondary"
               className="w-full"
-              onClick={handleInstantBuy}
-              disabled={!isConnected}
+              onConfirm={handleInstantBuy}
+              disabled={!isConnected || isPending}
             >
-              즉시 구매 {formatPrice(instantPrice)}
-            </Button>
+              꾹 눌러 즉시 구매 {formatPrice(instantPrice)}
+            </LongPressButton>
           )}
         </>
       )}

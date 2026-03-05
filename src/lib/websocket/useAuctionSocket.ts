@@ -1,20 +1,30 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { AuctionWebSocketMessage } from "@/types/auction";
+import type { AuctionWebSocketMessage, BidResultMessage } from "@/types/auction";
 import { getAccessToken } from "../utils/token";
 
 const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8080";
 const RECONNECT_INTERVAL = 3000;
 const MAX_RECONNECT_ATTEMPTS = 10;
 
+export type ConnectionStatus = "connected" | "connecting" | "reconnecting" | "failed";
+
+interface OptimisticState {
+  currentPrice: number;
+  bidCount: number;
+}
+
 interface UseAuctionSocketReturn {
   currentPrice: number;
   bidCount: number;
   remainingSeconds: number;
-  isConnected: boolean;
+  connectionStatus: ConnectionStatus;
   lastMessage: AuctionWebSocketMessage | null;
+  viewerCount: number | null;
   placeBid: (amount: number) => void;
+  isPending: boolean;
+  reconnect: () => void;
 }
 
 export function useAuctionSocket(
@@ -24,15 +34,18 @@ export function useAuctionSocket(
   initialRemainingSeconds: number,
 ): UseAuctionSocketReturn {
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectAttempts = useRef(0);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const countdownTimer = useRef<ReturnType<typeof setInterval>>(undefined);
+  const previousState = useRef<OptimisticState | null>(null);
+  const reconnectAttemptsRef = useRef(0);
 
   const [currentPrice, setCurrentPrice] = useState(initialPrice);
   const [bidCount, setBidCount] = useState(initialBidCount);
   const [remainingSeconds, setRemainingSeconds] = useState(initialRemainingSeconds);
-  const [isConnected, setIsConnected] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
   const [lastMessage, setLastMessage] = useState<AuctionWebSocketMessage | null>(null);
+  const [viewerCount, setViewerCount] = useState<number | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
   // API 데이터 로딩 완료 시 초기값 동기화
   useEffect(() => {
@@ -51,12 +64,14 @@ export function useAuctionSocket(
     const token = getAccessToken();
     const url = `${WS_BASE_URL}/ws/auction/${auctionId}${token ? `?token=${token}` : ""}`;
 
+    setConnectionStatus(reconnectAttemptsRef.current > 0 ? "reconnecting" : "connecting");
+
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      setIsConnected(true);
-      reconnectAttempts.current = 0;
+      setConnectionStatus("connected");
+      reconnectAttemptsRef.current = 0;
     };
 
     ws.onmessage = (event) => {
@@ -64,16 +79,29 @@ export function useAuctionSocket(
       setLastMessage(message);
 
       switch (message.type) {
-        case "BID_RESULT":
-          if (message.currentPrice != null) {
-            setCurrentPrice(message.currentPrice);
-            setBidCount(message.bidCount);
+        case "BID_RESULT": {
+          const bidResult = message as BidResultMessage;
+          setIsPending(false);
+
+          if (bidResult.status === "ACCEPTED") {
+            setCurrentPrice(bidResult.currentPrice);
+            setBidCount(bidResult.bidCount);
+          } else if (bidResult.status === "REJECTED") {
+            if (previousState.current) {
+              setCurrentPrice(previousState.current.currentPrice);
+              setBidCount(previousState.current.bidCount);
+            }
           }
+          previousState.current = null;
           break;
+        }
         case "AUCTION_UPDATE":
           setCurrentPrice(message.currentPrice);
           setBidCount(message.bidCount);
           setRemainingSeconds(message.remainingSeconds);
+          if (message.viewerCount != null) {
+            setViewerCount(message.viewerCount);
+          }
           break;
         case "AUCTION_CLOSED":
           setRemainingSeconds(0);
@@ -82,10 +110,12 @@ export function useAuctionSocket(
     };
 
     ws.onclose = () => {
-      setIsConnected(false);
-      if (reconnectAttempts.current < MAX_RECONNECT_ATTEMPTS) {
+      reconnectAttemptsRef.current++;
+      if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
+        setConnectionStatus("failed");
+      } else {
+        setConnectionStatus("reconnecting");
         reconnectTimer.current = setTimeout(() => {
-          reconnectAttempts.current++;
           connect();
         }, RECONNECT_INTERVAL);
       }
@@ -95,6 +125,16 @@ export function useAuctionSocket(
       ws.close();
     };
   }, [auctionId]);
+
+  const reconnect = useCallback(() => {
+    reconnectAttemptsRef.current = 0;
+    setConnectionStatus("connecting");
+    if (wsRef.current) {
+      wsRef.current.onclose = null;
+      wsRef.current.close();
+    }
+    connect();
+  }, [connect]);
 
   // WebSocket 연결
   useEffect(() => {
@@ -127,9 +167,25 @@ export function useAuctionSocket(
 
   const placeBid = useCallback((amount: number) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
+      // Optimistic Update
+      previousState.current = { currentPrice, bidCount };
+      setCurrentPrice(amount);
+      setBidCount((prev) => prev + 1);
+      setIsPending(true);
+
       wsRef.current.send(JSON.stringify({ type: "BID", amount }));
     }
-  }, []);
+  }, [currentPrice, bidCount]);
 
-  return { currentPrice, bidCount, remainingSeconds, isConnected, lastMessage, placeBid };
+  return {
+    currentPrice,
+    bidCount,
+    remainingSeconds,
+    connectionStatus,
+    lastMessage,
+    viewerCount,
+    placeBid,
+    isPending,
+    reconnect,
+  };
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { Eye } from "lucide-react";
 import { Loading } from "@/components/common/Loading";
 import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
@@ -10,7 +11,10 @@ import { BottomSheet } from "@/components/common/BottomSheet";
 import { AuctionTimer } from "@/components/auction/AuctionTimer";
 import { BidPanel } from "@/components/auction/BidPanel";
 import { BidHistory } from "@/components/auction/BidHistory";
-import type { AuctionResponse, BidHistoryResponse, BidResultMessage } from "@/types/auction";
+import { BidCelebration } from "@/components/auction/BidCelebration";
+import { BidFeed, type BidFeedItem } from "@/components/auction/BidFeed";
+import { AuctionCountdown } from "@/components/auction/AuctionCountdown";
+import type { AuctionResponse, BidHistoryResponse, BidResultMessage, AuctionClosedMessage } from "@/types/auction";
 import { AUCTION_STATUS_LABELS } from "@/types/auction";
 import { getAuction, getBidHistory } from "@/lib/api/auctions";
 import { useAuctionSocket } from "@/lib/websocket/useAuctionSocket";
@@ -18,6 +22,8 @@ import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { AnimatedPrice } from "@/components/common/AnimatedPrice";
 import Link from "next/link";
+import { ShareButton } from "@/components/common/ShareButton";
+import { WishlistButton } from "@/components/auction/WishlistButton";
 
 /** 경매 상태 -> Badge variant 매핑 */
 const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
@@ -35,6 +41,11 @@ export default function AuctionDetailPage() {
   const [bids, setBids] = useState<BidHistoryResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBidSheetOpen, setIsBidSheetOpen] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [feedItems, setFeedItems] = useState<BidFeedItem[]>([]);
+  const [auctionClosed, setAuctionClosed] = useState(false);
+  const [closedInfo, setClosedInfo] = useState<{ winnerId: number; winningPrice: number } | null>(null);
+  const [showCountdown, setShowCountdown] = useState(false);
 
   const id = Number(params.id);
 
@@ -69,9 +80,12 @@ export default function AuctionDetailPage() {
     currentPrice,
     bidCount,
     remainingSeconds,
-    isConnected,
+    connectionStatus,
     lastMessage,
+    viewerCount,
     placeBid,
+    isPending,
+    reconnect,
   } = useAuctionSocket(
     id,
     auction?.currentPrice ?? 0,
@@ -85,19 +99,104 @@ export default function AuctionDetailPage() {
     return { status: msg.status, message: msg.message };
   }, [lastMessage]);
 
-  // 입찰 성공 시 입찰 이력 자동 갱신
+  // 입찰 성공 시 축하 효과 + 입찰 이력 자동 갱신
   useEffect(() => {
     if (lastBidResult?.status === "ACCEPTED") {
+      setShowCelebration(true);
       getBidHistory(id).then(setBids).catch(() => {});
     }
   }, [lastBidResult, id]);
 
+  // 실시간 입찰 피드: AUCTION_UPDATE 수신 시 피드 아이템 추가
+  useEffect(() => {
+    if (!lastMessage || lastMessage.type !== "AUCTION_UPDATE") return;
+    const newItem: BidFeedItem = {
+      id: `${Date.now()}-${Math.random()}`,
+      amount: lastMessage.currentPrice,
+      timestamp: Date.now(),
+    };
+    setFeedItems((prev) => {
+      const next = [newItem, ...prev].slice(0, 10);
+      return next;
+    });
+    // 3초 후 해당 아이템 제거
+    const itemId = newItem.id;
+    const timer = setTimeout(() => {
+      setFeedItems((prev) => prev.filter((item) => item.id !== itemId));
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [lastMessage]);
+
+  // 경매 종료 감지
+  useEffect(() => {
+    if (!lastMessage || lastMessage.type !== "AUCTION_CLOSED") return;
+    const msg = lastMessage as AuctionClosedMessage;
+    setAuctionClosed(true);
+    setClosedInfo({ winnerId: msg.winnerId, winningPrice: msg.winningPrice });
+  }, [lastMessage]);
+
+  // 카운트다운 오버레이 표시 제어 (활성 경매에서만)
+  useEffect(() => {
+    if (isActive && remainingSeconds <= 5 && remainingSeconds > 0 && !auctionClosed) {
+      setShowCountdown(true);
+    }
+    // 낙찰! 표시 후 2초 뒤 숨김
+    if (remainingSeconds === 0 && showCountdown) {
+      const timer = setTimeout(() => setShowCountdown(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [remainingSeconds, auctionClosed, showCountdown, isActive]);
+
   if (loading || !auction) return <Loading />;
 
-  const isWinner = auction.winnerId === user?.id;
+  const isWinner = closedInfo
+    ? closedInfo.winnerId === user?.id
+    : auction.winnerId === user?.id;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
+    <>
+      {/* 입찰 축하 효과 */}
+      {showCelebration && (
+        <BidCelebration onComplete={() => setShowCelebration(false)} />
+      )}
+
+      {/* 실시간 입찰 피드 */}
+      <BidFeed items={feedItems} />
+
+      {/* 종료 카운트다운 오버레이 */}
+      {showCountdown && <AuctionCountdown remainingSeconds={remainingSeconds} />}
+
+      {/* 경매 종료 낙찰 오버레이 */}
+      {auctionClosed && closedInfo && (
+        <div className="fixed inset-0 z-[45] flex items-center justify-center bg-black/50">
+          <div className="bg-bg rounded-2xl p-8 text-center shadow-xl max-w-sm mx-4">
+            <p className="text-lg font-bold text-text-primary mb-2">경매 종료</p>
+            <p className="text-3xl font-bold text-primary mb-4">
+              {formatPrice(closedInfo.winningPrice)}
+            </p>
+            {isWinner ? (
+              <>
+                <p className="text-sm text-success-text mb-4">축하합니다! 낙찰되었습니다.</p>
+                <Button onClick={() => router.push(`/payments/${auction.id}`)}>
+                  결제하기
+                </Button>
+              </>
+            ) : (
+              <p className="text-sm text-text-secondary">다음 기회에 도전하세요.</p>
+            )}
+            <button
+              className="mt-4 block mx-auto text-sm text-text-tertiary hover:text-text-secondary"
+              onClick={() => setAuctionClosed(false)}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className={`max-w-5xl mx-auto px-4 py-6 transition-all duration-700 ${
+        auctionClosed ? "grayscale" : ""
+      }`}>
       {/* 뒤로가기 링크 */}
       <div className="mb-4">
         <Link href="/" className="text-sm text-primary hover:underline">
@@ -114,6 +213,16 @@ export default function AuctionDetailPage() {
               <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
                 {AUCTION_STATUS_LABELS[auction.status]}
               </Badge>
+              {viewerCount != null && (
+                <span className="flex items-center gap-1 text-xs text-text-secondary">
+                  <Eye size={14} />
+                  {viewerCount}명 참여 중
+                </span>
+              )}
+              <div className="ml-auto flex items-center gap-1">
+                <WishlistButton auctionId={auction.id} />
+                <ShareButton title={auction.title} text={`${auction.title} - 경매 진행 중`} />
+              </div>
             </div>
             <h1 className="text-2xl font-bold text-text-primary">{auction.title}</h1>
           </div>
@@ -182,9 +291,11 @@ export default function AuctionDetailPage() {
             instantPrice={auction.instantPrice}
             bidCount={bidCount}
             isActive={isActive && remainingSeconds > 0}
-            isConnected={isConnected}
+            connectionStatus={connectionStatus}
             onBid={placeBid}
             lastBidResult={lastBidResult}
+            isPending={isPending}
+            onReconnect={reconnect}
           />
         </div>
       </div>
@@ -217,13 +328,16 @@ export default function AuctionDetailPage() {
           instantPrice={auction.instantPrice}
           bidCount={bidCount}
           isActive={isActive && remainingSeconds > 0}
-          isConnected={isConnected}
+          connectionStatus={connectionStatus}
           onBid={(amount) => {
             placeBid(amount);
           }}
           lastBidResult={lastBidResult}
+          isPending={isPending}
+          onReconnect={reconnect}
         />
       </BottomSheet>
     </div>
+    </>
   );
 }
