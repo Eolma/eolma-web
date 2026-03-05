@@ -52,6 +52,11 @@ body {
   outline-offset: 2px;
 }
 
+/* 가격 등 숫자에 고정폭 적용 */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Toast 슬라이드 인 애니메이션 */
 @keyframes slideIn {
   from {

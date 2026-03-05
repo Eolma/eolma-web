@@ -1,17 +1,26 @@
 import { HTMLAttributes, ReactNode } from "react";
 
+type CardVariant = "elevated" | "flat" | "outlined";
+
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
+  /** 카드 스타일 변형 */
+  variant?: CardVariant;
   /** 패딩 없이 사용할 경우 (이미지 카드 등) */
   noPadding?: boolean;
   /** 클릭 가능한 카드 스타일 */
   interactive?: boolean;
 }
 
-const baseStyles = "bg-bg-elevated border border-border rounded-xl shadow-card";
+const variantStyles: Record<CardVariant, string> = {
+  elevated: "bg-bg-elevated border border-border rounded-xl shadow-card",
+  flat: "bg-bg-secondary rounded-xl",
+  outlined: "bg-bg-elevated border border-border rounded-xl",
+};
 
 export function Card({
   children,
+  variant = "elevated",
   noPadding = false,
   interactive = false,
   className = "",
@@ -20,9 +29,9 @@ export function Card({
   return (
     <div
       className={`
-        ${baseStyles}
+        ${variantStyles[variant]}
         ${noPadding ? "" : "p-4"}
-        ${interactive ? "cursor-pointer hover:shadow-md transition-shadow duration-150" : ""}
+        ${interactive ? "cursor-pointer hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-150" : ""}
         ${className}
       `}
       {...props}

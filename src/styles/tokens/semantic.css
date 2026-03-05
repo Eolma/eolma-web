@@ -48,6 +48,11 @@
   --color-info-light: var(--color-blue-50);
   --color-info-text: var(--color-blue-700);
 
+  /* Accent (가격 강조용) */
+  --color-accent: #e44d3a;
+  --color-accent-light: rgba(228, 77, 58, 0.08);
+  --color-accent-text: #d4402e;
+
   /* Overlay */
   --color-overlay: rgba(0, 0, 0, 0.5);
 }
@@ -98,6 +103,11 @@
   --color-info: var(--color-blue-400);
   --color-info-light: rgba(96, 165, 250, 0.1);
   --color-info-text: var(--color-blue-400);
+
+  /* Accent (가격 강조용) */
+  --color-accent: #ff6b5a;
+  --color-accent-light: rgba(255, 107, 90, 0.1);
+  --color-accent-text: #ff6b5a;
 
   /* Overlay */
   --color-overlay: rgba(0, 0, 0, 0.7);

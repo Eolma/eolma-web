@@ -24,9 +24,9 @@ export function AuctionCard({ auction }: AuctionCardProps) {
 
   return (
     <Link href={`/auctions/${auction.id}`} className="block group">
-      <Card interactive className="h-full">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="text-sm font-medium text-text-primary truncate group-hover:text-primary flex-1 mr-2">
+      <Card variant="flat" interactive className="h-full">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-base font-semibold text-text-primary truncate group-hover:text-primary flex-1 mr-2">
             {auction.title}
           </h3>
           <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
@@ -34,29 +34,24 @@ export function AuctionCard({ auction }: AuctionCardProps) {
           </Badge>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-text-secondary">현재가</span>
-            <span className="text-lg font-bold text-primary">
+        <div className="space-y-1.5">
+          <div className="flex justify-between items-baseline">
+            <span className="text-xs text-text-tertiary">현재가</span>
+            <span className="text-xl font-extrabold text-accent tabular-nums">
               {formatPrice(auction.currentPrice)}
             </span>
           </div>
 
           {auction.instantPrice && (
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-text-secondary">즉시 구매가</span>
-              <span className="text-sm text-text-primary">{formatPrice(auction.instantPrice)}</span>
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs text-text-tertiary">즉시 구매가</span>
+              <span className="text-sm text-text-secondary tabular-nums">{formatPrice(auction.instantPrice)}</span>
             </div>
           )}
 
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-text-secondary">입찰 수</span>
-            <span className="text-sm text-text-primary">{auction.bidCount}회</span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-text-secondary">{isActive ? "마감" : "종료"}</span>
-            <span className="text-sm text-text-primary">{formatDateTime(auction.endAt)}</span>
+          <div className="flex items-center gap-3 pt-1 text-xs text-text-tertiary">
+            <span>입찰 {auction.bidCount}회</span>
+            <span>{isActive ? "마감" : "종료"} {formatDateTime(auction.endAt)}</span>
           </div>
         </div>
       </Card>

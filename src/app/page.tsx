@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Gavel, PackageOpen } from "lucide-react";
 import { AuctionCard } from "@/components/auction/AuctionCard";
 import { Button } from "@/components/common/Button";
 import { Tabs } from "@/components/common/Tabs";
@@ -45,60 +47,83 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* 페이지 제목 */}
-      <h1 className="text-2xl font-bold text-text-primary mb-4">경매 목록</h1>
-
-      {/* 상태 필터 탭 */}
-      <Tabs
-        items={STATUS_TABS}
-        activeValue={statusFilter}
-        onChange={handleTabChange}
-        className="mb-6"
-      />
-
-      {/* 로딩 스켈레톤 */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
+    <div>
+      {/* 히어로 영역 */}
+      <section className="bg-bg-secondary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
+            얼마에 살 수 있을까?
+          </h1>
+          <p className="mt-2 text-base text-text-secondary">
+            중고 물품을 경매로 합리적인 가격에 거래하세요.
+          </p>
         </div>
-      ) : auctions.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-text-secondary">경매가 없습니다.</p>
-        </div>
-      ) : (
-        <>
-          {/* 경매 카드 그리드 */}
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* 상태 필터 탭 */}
+        <Tabs
+          items={STATUS_TABS}
+          activeValue={statusFilter}
+          onChange={handleTabChange}
+          className="mb-6"
+        />
+
+        {/* 로딩 스켈레톤 */}
+        {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {auctions.map((auction) => (
-              <AuctionCard key={auction.id} auction={auction} />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCard key={i} />
             ))}
           </div>
-
-          {/* 페이지네이션 */}
-          <div className="flex justify-center items-center gap-3 mt-8">
-            <Button
-              variant="secondary"
-              disabled={page === 0}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              이전
-            </Button>
-            <span className="text-sm text-text-secondary">
-              {page + 1} 페이지
-            </span>
-            <Button
-              variant="secondary"
-              disabled={!hasNext}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              다음
-            </Button>
+        ) : auctions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <PackageOpen className="w-12 h-12 text-text-tertiary mb-4" strokeWidth={1.5} />
+            <p className="text-lg font-semibold text-text-primary mb-1">
+              {statusFilter === "ACTIVE" ? "진행 중인 경매가 없습니다" : "경매가 없습니다"}
+            </p>
+            <p className="text-sm text-text-tertiary mb-6">
+              새로운 상품을 등록하고 경매를 시작해보세요.
+            </p>
+            <Link href="/products/new">
+              <Button variant="primary" size="md">
+                <Gavel className="w-4 h-4 mr-1.5" />
+                상품 등록하기
+              </Button>
+            </Link>
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            {/* 경매 카드 그리드 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {auctions.map((auction) => (
+                <AuctionCard key={auction.id} auction={auction} />
+              ))}
+            </div>
+
+            {/* 페이지네이션 */}
+            <div className="flex justify-center items-center gap-3 mt-8">
+              <Button
+                variant="secondary"
+                disabled={page === 0}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                이전
+              </Button>
+              <span className="text-sm text-text-secondary tabular-nums">
+                {page + 1} 페이지
+              </span>
+              <Button
+                variant="secondary"
+                disabled={!hasNext}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                다음
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

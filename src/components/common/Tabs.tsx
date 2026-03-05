@@ -14,7 +14,7 @@ interface TabsProps {
 
 export function Tabs({ items, activeValue, onChange, className = "" }: TabsProps) {
   return (
-    <div className={`flex border-b border-border ${className}`}>
+    <div className={`flex gap-2 ${className}`}>
       {items.map((item) => {
         const isActive = item.value === activeValue;
         return (
@@ -23,12 +23,12 @@ export function Tabs({ items, activeValue, onChange, className = "" }: TabsProps
             type="button"
             onClick={() => onChange(item.value)}
             className={`
-              px-4 py-2.5 text-sm font-medium transition-colors duration-150
-              border-b-2 -mb-px
+              px-4 py-2 text-sm font-medium rounded-full transition-all duration-150
+              active:scale-[0.95]
               ${
                 isActive
-                  ? "border-primary text-primary"
-                  : "border-transparent text-text-secondary hover:text-text-primary hover:border-border-hover"
+                  ? "bg-text-primary text-text-inverse"
+                  : "bg-bg-tertiary text-text-secondary hover:text-text-primary"
               }
             `}
           >

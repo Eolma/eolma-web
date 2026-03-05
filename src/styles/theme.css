@@ -41,6 +41,11 @@
   --color-info-light: var(--color-info-light);
   --color-info-text: var(--color-info-text);
 
+  /* Accent */
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-text: var(--color-accent-text);
+
   /* Overlay */
   --color-overlay: var(--color-overlay);
 

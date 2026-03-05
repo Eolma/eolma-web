@@ -26,20 +26,24 @@ export function Skeleton({
   );
 }
 
-/** 카드 형태의 스켈레톤 프리셋 */
+/** 카드 형태의 스켈레톤 프리셋 (AuctionCard 구조 매칭) */
 export function SkeletonCard({ className = "" }: { className?: string }) {
   return (
-    <div className={`bg-bg-elevated border border-border rounded-xl p-4 space-y-3 ${className}`}>
-      {/* 이미지 영역 */}
-      <Skeleton height="h-40" />
-      {/* 제목 */}
-      <Skeleton width="w-3/4" height="h-5" />
-      {/* 부제 */}
-      <Skeleton width="w-1/2" height="h-4" />
+    <div className={`bg-bg-secondary rounded-xl p-4 space-y-3 ${className}`}>
+      {/* 제목 + 뱃지 */}
+      <div className="flex justify-between items-center">
+        <Skeleton width="w-3/5" height="h-5" />
+        <Skeleton width="w-14" height="h-5" className="rounded-md" />
+      </div>
       {/* 가격 */}
-      <div className="flex justify-between items-center pt-2">
-        <Skeleton width="w-24" height="h-5" />
-        <Skeleton width="w-16" height="h-6" />
+      <div className="flex justify-between items-baseline">
+        <Skeleton width="w-12" height="h-3" />
+        <Skeleton width="w-24" height="h-6" />
+      </div>
+      {/* 부가 정보 */}
+      <div className="flex gap-3 pt-1">
+        <Skeleton width="w-16" height="h-3" />
+        <Skeleton width="w-28" height="h-3" />
       </div>
     </div>
   );

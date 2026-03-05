@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { PackageOpen } from "lucide-react";
 import { AuctionCard } from "@/components/auction/AuctionCard";
 import { Tabs } from "@/components/common/Tabs";
 import { SkeletonCard } from "@/components/common/Skeleton";
@@ -61,8 +62,10 @@ export default function AuctionsPage() {
           ))}
         </div>
       ) : auctions.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-text-secondary">경매가 없습니다.</p>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <PackageOpen className="w-12 h-12 text-text-tertiary mb-4" strokeWidth={1.5} />
+          <p className="text-lg font-semibold text-text-primary mb-1">경매가 없습니다</p>
+          <p className="text-sm text-text-tertiary">조건에 맞는 경매를 찾지 못했습니다.</p>
         </div>
       ) : (
         <>
