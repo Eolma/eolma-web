@@ -97,19 +97,28 @@ export function useScrollRestoration(loadedPages: number = 1) {
     return cachedData.current;
   }
 
-  /** 저장된 스크롤 위치로 복원 */
+  /** 저장된 스크롤 위치로 복원 (DOM 높이 충분할 때까지 재시도) */
   function restoreScroll() {
     if (restored.current) return;
     restored.current = true;
 
     const data = cachedData.current;
-    if (data && data.scrollY > 0) {
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, data.scrollY);
-        });
-      }, 100);
+    if (!data || data.scrollY <= 0) return;
+
+    const target = data.scrollY;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    function tryScroll() {
+      window.scrollTo(0, target);
+      // 실제 스크롤 위치가 목표에 근접했거나, 최대 시도 횟수 도달 시 중단
+      if (Math.abs(window.scrollY - target) < 10 || attempts >= maxAttempts) return;
+      attempts++;
+      requestAnimationFrame(tryScroll);
     }
+
+    // 첫 시도는 rAF 한 프레임 대기 후
+    requestAnimationFrame(tryScroll);
   }
 
   return { getSavedData, restoreScroll };
