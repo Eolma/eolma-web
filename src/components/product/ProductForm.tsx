@@ -85,10 +85,12 @@ export function ProductForm() {
 
   return (
     <form className="space-y-6">
+      {/* 에러 메시지 */}
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{error}</div>
+        <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">{error}</div>
       )}
 
+      {/* 기본 정보 */}
       <Input
         label="제목"
         value={title}
@@ -107,7 +109,7 @@ export function ProductForm() {
         required
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           label="카테고리"
           value={category}
@@ -126,9 +128,10 @@ export function ProductForm() {
         />
       </div>
 
-      <div className="border-t pt-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">경매 설정</h3>
-        <div className="grid grid-cols-2 gap-4">
+      {/* 경매 설정 */}
+      <div className="border-t border-border pt-6">
+        <h3 className="text-sm font-semibold text-text-primary mb-4">경매 설정</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="시작가 (원)"
             type="number"
@@ -164,7 +167,7 @@ export function ProductForm() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <Select
             label="마감 조건"
             value={endType}
@@ -201,8 +204,9 @@ export function ProductForm() {
         </div>
       </div>
 
-      <div className="border-t pt-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">이미지 URL</h3>
+      {/* 이미지 URL 입력 */}
+      <div className="border-t border-border pt-6">
+        <h3 className="text-sm font-semibold text-text-primary mb-4">이미지 URL</h3>
         <div className="flex gap-2 mb-3">
           <Input
             value={imageUrlInput}
@@ -222,12 +226,12 @@ export function ProductForm() {
         {imageUrls.length > 0 && (
           <div className="space-y-2">
             {imageUrls.map((url, i) => (
-              <div key={i} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-                <span className="text-sm text-gray-600 truncate flex-1">{url}</span>
+              <div key={i} className="flex items-center gap-2 bg-bg-secondary px-3 py-2 rounded-lg">
+                <span className="text-sm text-text-secondary truncate flex-1">{url}</span>
                 <button
                   type="button"
                   onClick={() => removeImageUrl(i)}
-                  className="text-red-500 hover:text-red-700 text-sm"
+                  className="text-error hover:text-error-text text-sm"
                 >
                   삭제
                 </button>
@@ -235,9 +239,10 @@ export function ProductForm() {
             ))}
           </div>
         )}
-        <p className="text-xs text-gray-400 mt-2">최대 10장</p>
+        <p className="text-xs text-text-tertiary mt-2">최대 10장</p>
       </div>
 
+      {/* 제출 버튼 */}
       <div className="flex gap-3 pt-4">
         <Button
           type="button"

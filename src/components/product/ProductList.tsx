@@ -11,7 +11,7 @@ export function ProductList({ products }: ProductListProps) {
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">등록된 상품이 없습니다.</p>
+        <p className="text-text-secondary">등록된 상품이 없습니다.</p>
       </div>
     );
   }

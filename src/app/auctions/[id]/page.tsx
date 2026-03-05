@@ -4,6 +4,9 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loading } from "@/components/common/Loading";
 import { Button } from "@/components/common/Button";
+import { Card } from "@/components/common/Card";
+import { Badge } from "@/components/common/Badge";
+import { BottomSheet } from "@/components/common/BottomSheet";
 import { AuctionTimer } from "@/components/auction/AuctionTimer";
 import { BidPanel } from "@/components/auction/BidPanel";
 import { BidHistory } from "@/components/auction/BidHistory";
@@ -15,6 +18,14 @@ import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import Link from "next/link";
 
+/** 경매 상태 -> Badge variant 매핑 */
+const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
+  ACTIVE: "success",
+  COMPLETED: "primary",
+  FAILED: "error",
+  PENDING: "warning",
+};
+
 export default function AuctionDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -22,6 +33,7 @@ export default function AuctionDetailPage() {
   const [auction, setAuction] = useState<AuctionResponse | null>(null);
   const [bids, setBids] = useState<BidHistoryResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isBidSheetOpen, setIsBidSheetOpen] = useState(false);
 
   const id = Number(params.id);
 
@@ -84,69 +96,73 @@ export default function AuctionDetailPage() {
   const isWinner = auction.winnerId === user?.id;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Link href="/" className="text-sm text-indigo-600 hover:underline">
+    <div className="max-w-5xl mx-auto px-4 py-6">
+      {/* 뒤로가기 링크 */}
+      <div className="mb-4">
+        <Link href="/" className="text-sm text-primary hover:underline">
           경매 목록으로
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 왼쪽: 상품 정보 */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-5">
+          {/* 제목 + 상태 뱃지 */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
-              }`}>
+              <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
                 {AUCTION_STATUS_LABELS[auction.status]}
-              </span>
+              </Badge>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">{auction.title}</h1>
+            <h1 className="text-2xl font-bold text-text-primary">{auction.title}</h1>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">시작가</span>
-              <p className="font-medium">{formatPrice(auction.startingPrice)}</p>
-            </div>
-            {auction.instantPrice && (
+          {/* 경매 상세 정보 그리드 */}
+          <Card>
+            <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">즉시 구매가</span>
-                <p className="font-medium">{formatPrice(auction.instantPrice)}</p>
+                <span className="text-text-secondary">시작가</span>
+                <p className="font-medium text-text-primary">{formatPrice(auction.startingPrice)}</p>
               </div>
-            )}
-            <div>
-              <span className="text-gray-500">최소 입찰 단위</span>
-              <p className="font-medium">{formatPrice(auction.minBidUnit)}</p>
+              {auction.instantPrice && (
+                <div>
+                  <span className="text-text-secondary">즉시 구매가</span>
+                  <p className="font-medium text-text-primary">{formatPrice(auction.instantPrice)}</p>
+                </div>
+              )}
+              <div>
+                <span className="text-text-secondary">최소 입찰 단위</span>
+                <p className="font-medium text-text-primary">{formatPrice(auction.minBidUnit)}</p>
+              </div>
+              <div>
+                <span className="text-text-secondary">마감 시간</span>
+                <p className="font-medium text-text-primary">{formatDateTime(auction.endAt)}</p>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">마감 시간</span>
-              <p className="font-medium">{formatDateTime(auction.endAt)}</p>
-            </div>
-          </div>
+          </Card>
 
+          {/* 낙찰 안내 */}
           {auction.status === "COMPLETED" && auction.winningPrice && (
-            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
-              <p className="text-sm text-indigo-700 font-medium">
+            <Card className="bg-primary-light border-primary">
+              <p className="text-sm text-primary font-medium">
                 낙찰가: {formatPrice(auction.winningPrice)}
               </p>
               {isWinner && (
                 <div className="mt-2">
-                  <p className="text-sm text-indigo-600 mb-2">축하합니다! 낙찰되었습니다.</p>
+                  <p className="text-sm text-primary mb-2">축하합니다! 낙찰되었습니다.</p>
                   <Button size="sm" onClick={() => router.push(`/payments/${auction.id}`)}>
                     결제하기
                   </Button>
                 </div>
               )}
-            </div>
+            </Card>
           )}
 
           {/* 상품 상세 링크 */}
           <div>
             <Link
               href={`/products/${auction.productId}`}
-              className="text-sm text-indigo-600 hover:underline"
+              className="text-sm text-primary hover:underline"
             >
               상품 상세 보기
             </Link>
@@ -156,8 +172,8 @@ export default function AuctionDetailPage() {
           <BidHistory bids={bids} />
         </div>
 
-        {/* 오른쪽: 입찰 패널 */}
-        <div className="space-y-4">
+        {/* 오른쪽: 입찰 패널 (데스크톱) */}
+        <div className="hidden lg:block space-y-4">
           <AuctionTimer remainingSeconds={remainingSeconds} />
           <BidPanel
             currentPrice={currentPrice}
@@ -171,6 +187,43 @@ export default function AuctionDetailPage() {
           />
         </div>
       </div>
+
+      {/* 모바일 하단 고정 입찰 버튼 */}
+      {isActive && remainingSeconds > 0 && (
+        <div className="fixed bottom-16 left-0 right-0 p-4 bg-bg border-t border-border lg:hidden z-40">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-xs text-text-secondary">현재가</p>
+              <p className="text-lg font-bold text-primary">{formatPrice(currentPrice)}</p>
+            </div>
+            <AuctionTimer remainingSeconds={remainingSeconds} />
+          </div>
+          <Button className="w-full" onClick={() => setIsBidSheetOpen(true)}>
+            입찰하기
+          </Button>
+        </div>
+      )}
+
+      {/* 모바일 BottomSheet 입찰 패널 */}
+      <BottomSheet
+        isOpen={isBidSheetOpen}
+        onClose={() => setIsBidSheetOpen(false)}
+        title="입찰하기"
+      >
+        <BidPanel
+          currentPrice={currentPrice}
+          minBidUnit={auction.minBidUnit}
+          instantPrice={auction.instantPrice}
+          bidCount={bidCount}
+          isActive={isActive && remainingSeconds > 0}
+          isConnected={isConnected}
+          onBid={(amount) => {
+            placeBid(amount);
+            setIsBidSheetOpen(false);
+          }}
+          lastBidResult={lastBidResult}
+        />
+      </BottomSheet>
     </div>
   );
 }

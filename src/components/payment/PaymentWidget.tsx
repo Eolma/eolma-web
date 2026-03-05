@@ -77,7 +77,7 @@ export function PaymentWidget({ orderId, amount, orderName }: PaymentWidgetProps
   return (
     <div className="space-y-4">
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{error}</div>
+        <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">{error}</div>
       )}
       <div id="payment-method" />
       <Button onClick={handlePayment} loading={paying} className="w-full" size="lg">

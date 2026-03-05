@@ -20,8 +20,8 @@ export default function NewProductPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">상품 등록</h1>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold text-text-primary mb-6">상품 등록</h1>
       <ProductForm />
     </div>
   );

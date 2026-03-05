@@ -4,11 +4,22 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loading } from "@/components/common/Loading";
 import { Button } from "@/components/common/Button";
+import { Card } from "@/components/common/Card";
+import { Badge } from "@/components/common/Badge";
 import type { ProductResponse } from "@/types/product";
 import { CATEGORY_LABELS, CONDITION_LABELS, PRODUCT_STATUS_LABELS, END_TYPE_LABELS } from "@/types/product";
 import { getProduct, activateProduct, deleteProduct } from "@/lib/api/products";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+
+/** 상품 상태 -> Badge variant 매핑 */
+const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
+  DRAFT: "neutral",
+  ACTIVE: "success",
+  IN_AUCTION: "primary",
+  SOLD: "warning",
+  CANCELLED: "error",
+};
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -65,16 +76,16 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* 이미지 */}
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* 이미지 영역 */}
         <div>
           {product.imageUrls.length > 0 ? (
             <div className="space-y-3">
-              <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden">
+              <div className="aspect-square bg-bg-tertiary rounded-xl overflow-hidden">
                 {failedImages.has(0) ? (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">이미지를 불러올 수 없습니다</span>
+                    <span className="text-text-tertiary text-sm">이미지를 불러올 수 없습니다</span>
                   </div>
                 ) : (
                   <img
@@ -88,10 +99,10 @@ export default function ProductDetailPage() {
               {product.imageUrls.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {product.imageUrls.slice(1).map((url, i) => (
-                    <div key={i} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    <div key={i} className="aspect-square bg-bg-tertiary rounded-lg overflow-hidden">
                       {failedImages.has(i + 1) ? (
                         <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-gray-400 text-xs">불러올 수 없음</span>
+                          <span className="text-text-tertiary text-xs">불러올 수 없음</span>
                         </div>
                       ) : (
                         <img
@@ -107,61 +118,65 @@ export default function ProductDetailPage() {
               )}
             </div>
           ) : (
-            <div className="aspect-square bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
+            <div className="aspect-square bg-bg-tertiary rounded-xl flex items-center justify-center text-text-tertiary">
               이미지 없음
             </div>
           )}
         </div>
 
-        {/* 정보 */}
+        {/* 상품 정보 */}
         <div className="space-y-4">
           <div>
-            <span className="text-xs text-gray-500">
+            <Badge variant={STATUS_BADGE_VARIANT[product.status] || "neutral"}>
               {PRODUCT_STATUS_LABELS[product.status]}
-            </span>
-            <h1 className="text-xl font-bold text-gray-900 mt-1">{product.title}</h1>
+            </Badge>
+            <h1 className="text-xl font-bold text-text-primary mt-2">{product.title}</h1>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="text-gray-500">카테고리</span>
-              <p className="font-medium">{CATEGORY_LABELS[product.category]}</p>
-            </div>
-            <div>
-              <span className="text-gray-500">상품 상태</span>
-              <p className="font-medium">{CONDITION_LABELS[product.conditionGrade]}</p>
-            </div>
-            <div>
-              <span className="text-gray-500">시작가</span>
-              <p className="font-medium">{formatPrice(product.startingPrice)}</p>
-            </div>
-            {product.instantPrice && (
+          <Card>
+            <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
-                <span className="text-gray-500">즉시 구매가</span>
-                <p className="font-medium">{formatPrice(product.instantPrice)}</p>
+                <span className="text-text-secondary">카테고리</span>
+                <p className="font-medium text-text-primary">{CATEGORY_LABELS[product.category]}</p>
               </div>
-            )}
-            <div>
-              <span className="text-gray-500">최소 입찰 단위</span>
-              <p className="font-medium">{formatPrice(product.minBidUnit)}</p>
+              <div>
+                <span className="text-text-secondary">상품 상태</span>
+                <p className="font-medium text-text-primary">{CONDITION_LABELS[product.conditionGrade]}</p>
+              </div>
+              <div>
+                <span className="text-text-secondary">시작가</span>
+                <p className="font-medium text-text-primary">{formatPrice(product.startingPrice)}</p>
+              </div>
+              {product.instantPrice && (
+                <div>
+                  <span className="text-text-secondary">즉시 구매가</span>
+                  <p className="font-medium text-text-primary">{formatPrice(product.instantPrice)}</p>
+                </div>
+              )}
+              <div>
+                <span className="text-text-secondary">최소 입찰 단위</span>
+                <p className="font-medium text-text-primary">{formatPrice(product.minBidUnit)}</p>
+              </div>
+              <div>
+                <span className="text-text-secondary">마감 조건</span>
+                <p className="font-medium text-text-primary">{END_TYPE_LABELS[product.endType]}: {product.endValue}</p>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">마감 조건</span>
-              <p className="font-medium">{END_TYPE_LABELS[product.endType]}: {product.endValue}</p>
-            </div>
-          </div>
+          </Card>
 
-          <div className="border-t pt-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">상품 설명</h3>
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{product.description}</p>
-          </div>
+          {/* 상품 설명 */}
+          <Card>
+            <h3 className="text-sm font-semibold text-text-primary mb-2">상품 설명</h3>
+            <p className="text-sm text-text-secondary whitespace-pre-wrap">{product.description}</p>
+          </Card>
 
-          <div className="text-xs text-gray-400">
+          <div className="text-xs text-text-tertiary">
             등록일: {formatDateTime(product.createdAt)}
           </div>
 
+          {/* 소유자 액션 버튼 */}
           {isOwner && product.status === "DRAFT" && (
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-3 pt-2">
               <Button onClick={handleActivate} loading={actionLoading} className="flex-1">
                 경매 등록
               </Button>
