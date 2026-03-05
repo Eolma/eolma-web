@@ -31,6 +31,14 @@ export function useScrollRestoration(loadedPages: number = 1) {
   const loadedPagesRef = useRef(loadedPages);
   loadedPagesRef.current = loadedPages;
 
+  // 브라우저 기본 스크롤 복원 비활성화 (커스텀 복원과 경쟁 방지)
+  useEffect(() => {
+    window.history.scrollRestoration = "manual";
+    return () => {
+      window.history.scrollRestoration = "auto";
+    };
+  }, []);
+
   // 마운트 시점에 저장된 데이터를 캐시 (scroll handler가 덮어쓰기 전에 확보)
   const cachedData = useRef<ScrollData | null>(null);
   const cachedDataLoaded = useRef(false);
