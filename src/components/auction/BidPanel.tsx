@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
+import { Card } from "@/components/common/Card";
 import { formatPrice } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 
@@ -50,31 +51,36 @@ export function BidPanel({
   }
 
   return (
-    <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+    <Card className="space-y-4">
+      {/* 현재 최고가 */}
       <div>
-        <p className="text-xs text-gray-500 mb-1">현재 최고가</p>
-        <p className="text-2xl font-bold text-indigo-600">{formatPrice(currentPrice)}</p>
-        <p className="text-sm text-gray-500 mt-1">입찰 수: {bidCount}회</p>
+        <p className="text-xs text-text-secondary mb-1">현재 최고가</p>
+        <p className="text-2xl font-bold text-primary">{formatPrice(currentPrice)}</p>
+        <p className="text-sm text-text-secondary mt-1">입찰 수: {bidCount}회</p>
       </div>
 
+      {/* 연결 상태 안내 */}
       {!isConnected && (
-        <div className="bg-yellow-50 text-yellow-700 text-sm px-3 py-2 rounded-lg">
+        <div className="bg-warning-light text-warning-text text-sm px-3 py-2 rounded-lg">
           서버 연결 중...
         </div>
       )}
 
+      {/* 입찰 거절 알림 */}
       {lastBidResult && lastBidResult.status === "REJECTED" && (
-        <div className="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg">
+        <div className="bg-error-light text-error-text text-sm px-3 py-2 rounded-lg">
           {lastBidResult.message || "입찰에 실패했습니다."}
         </div>
       )}
 
+      {/* 입찰 성공 알림 */}
       {lastBidResult && lastBidResult.status === "ACCEPTED" && (
-        <div className="bg-green-50 text-green-600 text-sm px-3 py-2 rounded-lg">
+        <div className="bg-success-light text-success-text text-sm px-3 py-2 rounded-lg">
           입찰이 완료되었습니다.
         </div>
       )}
 
+      {/* 입찰 폼 (로그인 + 활성 경매) */}
       {isActive && isAuthenticated && (
         <>
           <form onSubmit={handleBid} className="space-y-3">
@@ -86,7 +92,7 @@ export function BidPanel({
               min={nextMinBid}
               step={minBidUnit}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-text-secondary">
               최소 입찰가: {formatPrice(nextMinBid)}
             </p>
             <Button
@@ -111,20 +117,22 @@ export function BidPanel({
         </>
       )}
 
+      {/* 비로그인 안내 */}
       {isActive && !isAuthenticated && (
         <div className="text-center py-4">
-          <p className="text-sm text-gray-500 mb-2">입찰하려면 로그인이 필요합니다.</p>
-          <a href="/login" className="text-sm text-indigo-600 hover:underline">
+          <p className="text-sm text-text-secondary mb-2">입찰하려면 로그인이 필요합니다.</p>
+          <a href="/login" className="text-sm text-primary hover:underline">
             로그인
           </a>
         </div>
       )}
 
+      {/* 종료 안내 */}
       {!isActive && (
         <div className="text-center py-2">
-          <p className="text-sm text-gray-500">경매가 종료되었습니다.</p>
+          <p className="text-sm text-text-secondary">경매가 종료되었습니다.</p>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

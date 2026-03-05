@@ -4,59 +4,62 @@ import Link from "next/link";
 import type { AuctionResponse } from "@/types/auction";
 import { AUCTION_STATUS_LABELS } from "@/types/auction";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
+import { Card } from "@/components/common/Card";
+import { Badge } from "@/components/common/Badge";
 
 interface AuctionCardProps {
   auction: AuctionResponse;
 }
 
+/** 경매 상태 -> Badge variant 매핑 */
+const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
+  ACTIVE: "success",
+  COMPLETED: "primary",
+  FAILED: "error",
+  PENDING: "warning",
+};
+
 export function AuctionCard({ auction }: AuctionCardProps) {
   const isActive = auction.status === "ACTIVE";
 
-  const statusColor: Record<string, string> = {
-    ACTIVE: "bg-green-100 text-green-700",
-    COMPLETED: "bg-indigo-100 text-indigo-700",
-    FAILED: "bg-red-100 text-red-600",
-    PENDING: "bg-yellow-100 text-yellow-700",
-  };
-
   return (
     <Link href={`/auctions/${auction.id}`} className="block group">
-      <div className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+      <Card interactive className="h-full">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-sm font-medium text-gray-900 truncate group-hover:text-indigo-600 flex-1 mr-2">
+          <h3 className="text-sm font-medium text-text-primary truncate group-hover:text-primary flex-1 mr-2">
             {auction.title}
           </h3>
-          <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${statusColor[auction.status] || "bg-gray-100"}`}>
+          <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
             {AUCTION_STATUS_LABELS[auction.status] || auction.status}
-          </span>
+          </Badge>
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-500">현재가</span>
-            <span className="text-lg font-bold text-indigo-600">
+            <span className="text-xs text-text-secondary">현재가</span>
+            <span className="text-lg font-bold text-primary">
               {formatPrice(auction.currentPrice)}
             </span>
           </div>
 
           {auction.instantPrice && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">즉시 구매가</span>
-              <span className="text-sm text-gray-700">{formatPrice(auction.instantPrice)}</span>
+              <span className="text-xs text-text-secondary">즉시 구매가</span>
+              <span className="text-sm text-text-primary">{formatPrice(auction.instantPrice)}</span>
             </div>
           )}
 
           <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-500">입찰 수</span>
-            <span className="text-sm text-gray-700">{auction.bidCount}회</span>
+            <span className="text-xs text-text-secondary">입찰 수</span>
+            <span className="text-sm text-text-primary">{auction.bidCount}회</span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-500">{isActive ? "마감" : "종료"}</span>
-            <span className="text-sm text-gray-700">{formatDateTime(auction.endAt)}</span>
+            <span className="text-xs text-text-secondary">{isActive ? "마감" : "종료"}</span>
+            <span className="text-sm text-text-primary">{formatDateTime(auction.endAt)}</span>
           </div>
         </div>
-      </div>
+      </Card>
     </Link>
   );
 }

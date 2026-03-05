@@ -13,18 +13,18 @@ export function AuctionTimer({ remainingSeconds }: AuctionTimerProps) {
   return (
     <div className={`text-center p-4 rounded-xl ${
       isEnded
-        ? "bg-gray-100"
+        ? "bg-bg-tertiary"
         : isUrgent
-          ? "bg-red-50 border border-red-200"
-          : "bg-indigo-50 border border-indigo-200"
+          ? "bg-error-light border border-error"
+          : "bg-primary-light border border-primary"
     }`}>
-      <p className="text-xs text-gray-500 mb-1">남은 시간</p>
+      <p className="text-xs text-text-secondary mb-1">남은 시간</p>
       <p className={`text-3xl font-mono font-bold ${
         isEnded
-          ? "text-gray-400"
+          ? "text-text-tertiary"
           : isUrgent
-            ? "text-red-600"
-            : "text-indigo-600"
+            ? "text-error"
+            : "text-primary"
       }`}>
         {formatRemainingTime(remainingSeconds)}
       </p>
