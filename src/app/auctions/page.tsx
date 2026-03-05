@@ -86,7 +86,8 @@ export default function AuctionsPage() {
         }
       } else {
         initialLoad.current = false;
-        fetchPage(0);
+        await fetchPage(0);
+        restoreScroll();
       }
     }
     init();

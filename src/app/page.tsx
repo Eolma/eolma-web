@@ -95,7 +95,8 @@ export default function HomePage() {
         }
       } else {
         initialLoad.current = false;
-        fetchPage(0);
+        await fetchPage(0);
+        restoreScroll();
       }
     }
     init();
