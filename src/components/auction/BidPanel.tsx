@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
+import Link from "next/link";
 import { Input } from "@/components/common/Input";
 import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
@@ -121,9 +122,9 @@ export function BidPanel({
       {isActive && !isAuthenticated && (
         <div className="text-center py-4">
           <p className="text-sm text-text-secondary mb-2">입찰하려면 로그인이 필요합니다.</p>
-          <a href="/login" className="text-sm text-primary hover:underline">
+          <Link href="/login" className="text-sm text-primary hover:underline">
             로그인
-          </a>
+          </Link>
         </div>
       )}
 

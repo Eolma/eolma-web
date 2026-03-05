@@ -219,7 +219,6 @@ export default function AuctionDetailPage() {
           isConnected={isConnected}
           onBid={(amount) => {
             placeBid(amount);
-            setIsBidSheetOpen(false);
           }}
           lastBidResult={lastBidResult}
         />

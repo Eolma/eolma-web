@@ -94,58 +94,58 @@ eolma-web은 현재 Tailwind 기본 색상 클래스(`indigo-600`, `gray-*` 등)
 ## Implementation Items
 
 ### Phase 1: Common 컴포넌트 개편 (병렬 단위 A)
-- [ ] 1-1: Button.tsx 토큰 마이그레이션 (indigo -> primary, gray -> semantic)
-- [ ] 1-2: Input.tsx, Select.tsx, Textarea.tsx 토큰 마이그레이션
-- [ ] 1-3: Modal.tsx 토큰 마이그레이션 (bg-white -> bg-bg-elevated, overlay)
-- [ ] 1-4: Loading.tsx 토큰 마이그레이션
-- [ ] 1-5: Card.tsx 신규 생성 (bg-bg-elevated, border, shadow-card, rounded-xl)
-- [ ] 1-6: Badge.tsx 신규 생성 (success/warning/error/info/neutral/primary variant)
-- [ ] 1-7: Toast.tsx + useToastStore.ts 신규 생성 (Zustand 기반 알림)
-- [ ] 1-8: Avatar.tsx 신규 생성 (이미지/이니셜, sm/md/lg)
-- [ ] 1-9: Tabs.tsx 신규 생성 (items + activeValue + onChange)
-- [ ] 1-10: BottomSheet.tsx 신규 생성 (모바일 바텀 시트)
-- [ ] 1-11: Skeleton.tsx 신규 생성 (로딩 스켈레톤)
+- [x] 1-1: Button.tsx 토큰 마이그레이션 (indigo -> primary, gray -> semantic)
+- [x] 1-2: Input.tsx, Select.tsx, Textarea.tsx 토큰 마이그레이션
+- [x] 1-3: Modal.tsx 토큰 마이그레이션 (bg-white -> bg-bg-elevated, overlay)
+- [x] 1-4: Loading.tsx 토큰 마이그레이션
+- [x] 1-5: Card.tsx 신규 생성 (bg-bg-elevated, border, shadow-card, rounded-xl)
+- [x] 1-6: Badge.tsx 신규 생성 (success/warning/error/info/neutral/primary variant)
+- [x] 1-7: Toast.tsx + useToastStore.ts 신규 생성 (Zustand 기반 알림)
+- [x] 1-8: Avatar.tsx 신규 생성 (이미지/이니셜, sm/md/lg)
+- [x] 1-9: Tabs.tsx 신규 생성 (items + activeValue + onChange)
+- [x] 1-10: BottomSheet.tsx 신규 생성 (모바일 바텀 시트)
+- [x] 1-11: Skeleton.tsx 신규 생성 (로딩 스켈레톤)
 
 ### Phase 2: Layout 개편 (병렬 단위 B, Phase 1과 동시 진행 가능)
-- [ ] 2-1: BottomNav.tsx 신규 생성 (모바일 하단 네비, 당근/토스 스타일)
-- [ ] 2-2: Header.tsx 반응형 재설계 (모바일: 심플, 데스크톱: 풀 네비)
-- [ ] 2-3: ThemeToggle.tsx 신규 생성 (Sun/Moon 아이콘, useTheme)
-- [ ] 2-4: Footer.tsx 토큰 마이그레이션
-- [ ] 2-5: layout.tsx 최종 조립 (BottomNav, ToastProvider, pb-16 md:pb-0)
-- [ ] 2-6: PWA manifest.ts 생성 + 아이콘 placeholder
+- [x] 2-1: BottomNav.tsx 신규 생성 (모바일 하단 네비, 당근/토스 스타일)
+- [x] 2-2: Header.tsx 반응형 재설계 (모바일: 심플, 데스크톱: 풀 네비)
+- [x] 2-3: ThemeToggle.tsx 신규 생성 (Sun/Moon 아이콘, useTheme)
+- [x] 2-4: Footer.tsx 토큰 마이그레이션
+- [x] 2-5: layout.tsx 최종 조립 (BottomNav, ToastProvider, pb-16 md:pb-0)
+- [x] 2-6: PWA manifest.ts 생성 + 아이콘 placeholder
 
 ### Phase 3: 페이지 재설계 - Core (Phase 1,2 완료 후, 병렬 단위 C)
-- [ ] 3-1: 홈페이지 재설계 (Tabs 필터, AuctionCard -> Card/Badge, Skeleton)
-- [ ] 3-2: AuctionCard.tsx Card/Badge 기반 재설계
-- [ ] 3-3: 경매 상세 페이지 토큰 + 모바일 BottomSheet 입찰
-- [ ] 3-4: AuctionTimer.tsx, BidPanel.tsx, BidHistory.tsx 토큰 마이그레이션
-- [ ] 3-5: ProductCard.tsx Card/Badge 기반 재설계
-- [ ] 3-6: ProductForm.tsx, ProductList.tsx 토큰 마이그레이션
-- [ ] 3-7: 상품 상세/등록 페이지 토큰 마이그레이션
+- [x] 3-1: 홈페이지 재설계 (Tabs 필터, AuctionCard -> Card/Badge, Skeleton)
+- [x] 3-2: AuctionCard.tsx Card/Badge 기반 재설계
+- [x] 3-3: 경매 상세 페이지 토큰 + 모바일 BottomSheet 입찰
+- [x] 3-4: AuctionTimer.tsx, BidPanel.tsx, BidHistory.tsx 토큰 마이그레이션
+- [x] 3-5: ProductCard.tsx Card/Badge 기반 재설계
+- [x] 3-6: ProductForm.tsx, ProductList.tsx 토큰 마이그레이션
+- [x] 3-7: 상품 상세/등록 페이지 토큰 마이그레이션
 
 ### Phase 4: 페이지 재설계 - Auth/MyPage/Payment (Phase 1,2 완료 후, 병렬 단위 D)
-- [ ] 4-1: LoginForm.tsx 토스 스타일 재설계
-- [ ] 4-2: RegisterForm.tsx 토큰 마이그레이션
-- [ ] 4-3: SocialLoginButtons.tsx, AccountLinkModal.tsx 토큰 마이그레이션
-- [ ] 4-4: 로그인/회원가입 페이지 토큰 마이그레이션
-- [ ] 4-5: OAuth 콜백, 닉네임 설정 페이지 토큰 마이그레이션
-- [ ] 4-6: 마이페이지 Avatar/Card/Tabs 기반 재설계
-- [ ] 4-7: 마이페이지 하위 페이지 (products, bids) 토큰 마이그레이션
-- [ ] 4-8: 결제 페이지 Card 기반 재설계
-- [ ] 4-9: 결제 완료 페이지 토큰 마이그레이션
+- [x] 4-1: LoginForm.tsx 토스 스타일 재설계
+- [x] 4-2: RegisterForm.tsx 토큰 마이그레이션
+- [x] 4-3: SocialLoginButtons.tsx, AccountLinkModal.tsx 토큰 마이그레이션
+- [x] 4-4: 로그인/회원가입 페이지 토큰 마이그레이션
+- [x] 4-5: OAuth 콜백, 닉네임 설정 페이지 토큰 마이그레이션
+- [x] 4-6: 마이페이지 Avatar/Card/Tabs 기반 재설계
+- [x] 4-7: 마이페이지 하위 페이지 (products, bids) 토큰 마이그레이션
+- [x] 4-8: 결제 페이지 Card 기반 재설계
+- [x] 4-9: 결제 완료 페이지 토큰 마이그레이션
 
 ### Phase 5: 최종 검증
-- [ ] 5-1: `npm run build` 성공 확인
-- [ ] 5-2: grep으로 하드코딩 색상 클래스 잔존 여부 확인
+- [x] 5-1: `npm run build` 성공 확인
+- [x] 5-2: grep으로 하드코딩 색상 클래스 잔존 여부 확인
 - [ ] 5-3: light/dark 테마 전환 전 페이지 확인
 
 ## Acceptance Criteria
-- [ ] AC-1: 모든 컴포넌트/페이지에서 `indigo-`, 하드코딩된 `gray-`, `green-`, `red-`, `yellow-` Tailwind 클래스가 없음
+- [x] AC-1: 모든 컴포넌트/페이지에서 `indigo-`, 하드코딩된 `gray-`, `green-`, `red-`, `yellow-` Tailwind 클래스가 없음
 - [ ] AC-2: light/dark 테마 전환 시 모든 페이지가 정상 렌더링
 - [ ] AC-3: 모바일(375px)에서 BottomNav 표시, Header 심플 모드
 - [ ] AC-4: 데스크톱(1280px)에서 Header 풀 네비, Footer 표시
-- [ ] AC-5: `npm run build` 성공
-- [ ] AC-6: PWA manifest 로드 가능
+- [x] AC-5: `npm run build` 성공
+- [x] AC-6: PWA manifest 로드 가능
 
 ## Notes
 - Phase 1 + Phase 2는 병렬 진행 가능 (상호 독립)
