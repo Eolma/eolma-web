@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { AuthInitializer } from "@/components/layout/AuthInitializer";
 
 export const metadata: Metadata = {
@@ -48,8 +49,9 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col bg-bg text-text-primary">
         <AuthInitializer>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <Footer />
+          <BottomNav />
         </AuthInitializer>
       </body>
     </html>
