@@ -65,8 +65,10 @@ export function useAuctionSocket(
 
       switch (message.type) {
         case "BID_RESULT":
-          setCurrentPrice(message.currentPrice);
-          setBidCount(message.bidCount);
+          if (message.currentPrice != null) {
+            setCurrentPrice(message.currentPrice);
+            setBidCount(message.bidCount);
+          }
           break;
         case "AUCTION_UPDATE":
           setCurrentPrice(message.currentPrice);
