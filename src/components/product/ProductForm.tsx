@@ -121,7 +121,7 @@ export function ProductForm() {
           value={conditionGrade}
           onChange={(e) => setConditionGrade(e.target.value)}
           placeholder="선택하세요"
-          options={CONDITION_GRADES.map((g) => ({ value: g, label: `${g}급 - ${CONDITION_LABELS[g]}` }))}
+          options={CONDITION_GRADES.map((g) => ({ value: g, label: CONDITION_LABELS[g] }))}
           required
         />
       </div>

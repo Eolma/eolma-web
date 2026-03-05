@@ -66,13 +66,15 @@ export const CATEGORY_LABELS: Record<string, string> = {
   OTHER: "기타",
 };
 
-export const CONDITION_GRADES = ["S", "A", "B", "C"] as const;
+export const CONDITION_GRADES = ["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "POOR"] as const;
 
 export const CONDITION_LABELS: Record<string, string> = {
-  S: "미개봉/새상품",
-  A: "거의 새것",
-  B: "사용감 있음",
-  C: "상태 나쁨",
+  NEW: "미개봉/새상품",
+  LIKE_NEW: "거의 새것",
+  EXCELLENT: "매우 좋음",
+  GOOD: "좋음",
+  FAIR: "보통",
+  POOR: "상태 나쁨",
 };
 
 export const END_TYPES = ["TIME", "BID_COUNT", "COMBINED"] as const;

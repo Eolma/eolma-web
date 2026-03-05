@@ -34,6 +34,19 @@ export function useAuctionSocket(
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<AuctionWebSocketMessage | null>(null);
 
+  // API 데이터 로딩 완료 시 초기값 동기화
+  useEffect(() => {
+    if (initialPrice > 0) setCurrentPrice(initialPrice);
+  }, [initialPrice]);
+
+  useEffect(() => {
+    if (initialBidCount > 0) setBidCount(initialBidCount);
+  }, [initialBidCount]);
+
+  useEffect(() => {
+    if (initialRemainingSeconds > 0) setRemainingSeconds(initialRemainingSeconds);
+  }, [initialRemainingSeconds]);
+
   const connect = useCallback(() => {
     const token = getAccessToken();
     const url = `${WS_BASE_URL}/ws/auction/${auctionId}${token ? `?token=${token}` : ""}`;
