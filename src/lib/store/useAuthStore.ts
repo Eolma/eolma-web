@@ -83,8 +83,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
 
     // 토큰이 있으면 저장 + 사용자 정보 로드
-    if (res.tokens) {
-      setTokens(res.tokens.accessToken, res.tokens.refreshToken);
+    if (res.accessToken && res.refreshToken) {
+      setTokens(res.accessToken, res.refreshToken);
       const user = await authApi.getMyProfile();
       set({ user, isAuthenticated: true });
     }

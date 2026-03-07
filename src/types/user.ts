@@ -52,9 +52,12 @@ export interface AccountLinkInfo {
 }
 
 export interface OAuthLoginResponse {
-  tokens?: LoginResponse;
+  accessToken?: string;
+  refreshToken?: string;
   nicknameRequired?: boolean;
-  linkInfo?: AccountLinkInfo;
+  linkToken?: string;
+  existingProviders?: string[];
+  email?: string;
 }
 
 export interface LinkedAccount {

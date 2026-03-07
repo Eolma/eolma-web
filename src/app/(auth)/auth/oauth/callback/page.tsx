@@ -6,7 +6,17 @@ import { Loading } from "@/components/common/Loading";
 import { AccountLinkModal } from "@/components/auth/AccountLinkModal";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { ApiException } from "@/lib/api/client";
-import type { AuthProvider, AccountLinkInfo } from "@/types/user";
+import type { AuthProvider, AccountLinkInfo, OAuthLoginResponse } from "@/types/user";
+
+function toLinkInfo(res: OAuthLoginResponse): AccountLinkInfo | null {
+  if (!res.linkToken) return null;
+  return {
+    linkToken: res.linkToken,
+    email: res.email || "",
+    existingProviders: (res.existingProviders || []) as AuthProvider[],
+    hasPassword: (res.existingProviders || []).includes("LOCAL"),
+  };
+}
 
 function OAuthCallbackContent() {
   const router = useRouter();
@@ -35,8 +45,9 @@ function OAuthCallbackContent() {
       try {
         const res = await oauthLogin(provider, code);
 
-        if (res.linkInfo) {
-          setLinkInfo(res.linkInfo);
+        const link = toLinkInfo(res);
+        if (link) {
+          setLinkInfo(link);
           return;
         }
 

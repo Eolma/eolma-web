@@ -69,8 +69,8 @@ export function SocialLoginButtons() {
           Google로 계속하기
         </button>
 
-        {/* Kakao - 브랜드 색상 예외 유지 */}
-        <button
+        {/* TODO: 카카오 로그인 - 앱 등록 완료 후 활성화 */}
+        {/* <button
           type="button"
           onClick={handleKakaoLogin}
           className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
@@ -78,7 +78,7 @@ export function SocialLoginButtons() {
         >
           <KakaoIcon />
           카카오로 계속하기
-        </button>
+        </button> */}
       </div>
     </div>
   );
