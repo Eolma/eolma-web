@@ -25,9 +25,9 @@ import Link from "next/link";
 import { ShareButton } from "@/components/common/ShareButton";
 import { WishlistButton } from "@/components/auction/WishlistButton";
 
-/** 경매 상태 -> Badge variant 매핑 */
 const STATUS_BADGE_VARIANT: Record<string, "success" | "primary" | "error" | "warning" | "neutral"> = {
   ACTIVE: "success",
+  PENDING_INSTANT_BUY: "warning",
   COMPLETED: "primary",
   FAILED: "error",
   PENDING: "warning",
@@ -74,7 +74,7 @@ export default function AuctionDetailPage() {
     return remaining;
   }, [auction]);
 
-  const isActive = auction?.status === "ACTIVE";
+  const isActive = auction?.status === "ACTIVE" || auction?.status === "PENDING_INSTANT_BUY";
 
   const {
     currentPrice,
@@ -86,12 +86,21 @@ export default function AuctionDetailPage() {
     placeBid,
     isPending,
     reconnect,
+    instantBuyReservation,
+    myInstantBuyReserved,
   } = useAuctionSocket(
     id,
     auction?.currentPrice ?? 0,
     auction?.bidCount ?? 0,
     initialRemainingSeconds,
   );
+
+  // 내가 즉시구매를 선점했으면 결제 페이지로 이동
+  useEffect(() => {
+    if (myInstantBuyReserved) {
+      router.push(`/payments/${myInstantBuyReserved.auctionId}`);
+    }
+  }, [myInstantBuyReserved, router]);
 
   const lastBidResult = useMemo(() => {
     if (!lastMessage || lastMessage.type !== "BID_RESULT") return null;
@@ -120,7 +129,6 @@ export default function AuctionDetailPage() {
       const next = [newItem, ...prev].slice(0, 10);
       return next;
     });
-    // 3초 후 해당 아이템 제거
     const itemId = newItem.id;
     const timer = setTimeout(() => {
       setFeedItems((prev) => prev.filter((item) => item.id !== itemId));
@@ -136,12 +144,11 @@ export default function AuctionDetailPage() {
     setClosedInfo({ winnerId: msg.winnerId, winningPrice: msg.winningPrice });
   }, [lastMessage]);
 
-  // 카운트다운 오버레이 표시 제어 (활성 경매에서만)
+  // 카운트다운 오버레이 표시 제어
   useEffect(() => {
     if (isActive && remainingSeconds <= 5 && remainingSeconds > 0 && !auctionClosed) {
       setShowCountdown(true);
     }
-    // 낙찰! 표시 후 2초 뒤 숨김
     if (remainingSeconds === 0 && showCountdown) {
       const timer = setTimeout(() => setShowCountdown(false), 2000);
       return () => clearTimeout(timer);
@@ -154,20 +161,18 @@ export default function AuctionDetailPage() {
     ? closedInfo.winnerId === user?.id
     : auction.winnerId === user?.id;
 
+  const displayStatus = instantBuyReservation ? "PENDING_INSTANT_BUY" : auction.status;
+
   return (
     <>
-      {/* 입찰 축하 효과 */}
       {showCelebration && (
         <BidCelebration onComplete={() => setShowCelebration(false)} />
       )}
 
-      {/* 실시간 입찰 피드 */}
       <BidFeed items={feedItems} />
 
-      {/* 종료 카운트다운 오버레이 */}
       {showCountdown && <AuctionCountdown remainingSeconds={remainingSeconds} />}
 
-      {/* 경매 종료 낙찰 오버레이 */}
       {auctionClosed && closedInfo && (
         <div className="fixed inset-0 z-[45] flex items-center justify-center bg-black/50">
           <div className="bg-bg rounded-2xl p-8 text-center shadow-xl max-w-sm mx-4">
@@ -198,7 +203,6 @@ export default function AuctionDetailPage() {
       <div className={`max-w-5xl mx-auto px-4 py-6 transition-all duration-700 ${
         auctionClosed ? "grayscale" : ""
       }`}>
-      {/* 뒤로가기 링크 */}
       <div className="mb-4">
         <Link href="/" className="text-sm text-primary hover:underline">
           경매 목록으로
@@ -206,13 +210,11 @@ export default function AuctionDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 왼쪽: 상품 정보 */}
         <div className="lg:col-span-2 space-y-5">
-          {/* 제목 + 상태 뱃지 */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant={STATUS_BADGE_VARIANT[auction.status] || "neutral"}>
-                {AUCTION_STATUS_LABELS[auction.status]}
+              <Badge variant={STATUS_BADGE_VARIANT[displayStatus] || "neutral"}>
+                {AUCTION_STATUS_LABELS[displayStatus] || displayStatus}
               </Badge>
               {viewerCount != null && (
                 <span className="flex items-center gap-1 text-xs text-text-secondary">
@@ -228,7 +230,6 @@ export default function AuctionDetailPage() {
             <h1 className="text-2xl font-bold text-text-primary">{auction.title}</h1>
           </div>
 
-          {/* 경매 상세 정보 그리드 */}
           <Card>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -252,7 +253,6 @@ export default function AuctionDetailPage() {
             </div>
           </Card>
 
-          {/* 낙찰 안내 */}
           {auction.status === "COMPLETED" && auction.winningPrice && (
             <Card className="bg-primary-light border-primary">
               <p className="text-sm text-primary font-medium">
@@ -269,7 +269,6 @@ export default function AuctionDetailPage() {
             </Card>
           )}
 
-          {/* 상품 상세 링크 */}
           <div>
             <Link
               href={`/products/${auction.productId}`}
@@ -279,7 +278,6 @@ export default function AuctionDetailPage() {
             </Link>
           </div>
 
-          {/* 입찰 이력 */}
           <BidHistory bids={bids} />
         </div>
 
@@ -297,12 +295,13 @@ export default function AuctionDetailPage() {
             lastBidResult={lastBidResult}
             isPending={isPending}
             onReconnect={reconnect}
+            instantBuyReservation={instantBuyReservation}
           />
         </div>
       </div>
 
       {/* 모바일 하단 고정 입찰 버튼 */}
-      {isActive && remainingSeconds > 0 && (
+      {isActive && remainingSeconds > 0 && !instantBuyReservation && (
         <div className="fixed bottom-16 left-0 right-0 p-4 bg-bg border-t border-border lg:hidden z-40">
           <div className="flex items-center justify-between mb-2">
             <div>
@@ -336,6 +335,7 @@ export default function AuctionDetailPage() {
           lastBidResult={lastBidResult}
           isPending={isPending}
           onReconnect={reconnect}
+          instantBuyReservation={instantBuyReservation}
         />
       </BottomSheet>
     </div>

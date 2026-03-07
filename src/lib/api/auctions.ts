@@ -23,6 +23,12 @@ export async function getBidHistory(auctionId: number): Promise<BidHistoryRespon
   return data.content;
 }
 
+export async function cancelInstantBuy(auctionId: number): Promise<void> {
+  return apiClient<void>(`/api/v1/auctions/${auctionId}/instant-buy/cancel`, {
+    method: "POST",
+  });
+}
+
 export async function getMyAuctions(params?: {
   page?: number;
   size?: number;

@@ -70,6 +70,25 @@ export interface AuctionClosedMessage {
   status: string;
 }
 
+export interface InstantBuyReservedMessage {
+  type: "INSTANT_BUY_RESERVED";
+  auctionId: number;
+  price: number;
+  expiresAt: string;
+}
+
+export interface InstantBuyStartedMessage {
+  type: "INSTANT_BUY_STARTED";
+  buyerId: number;
+  expiresAt: string;
+  status: string;
+}
+
+export interface InstantBuyCancelledMessage {
+  type: "INSTANT_BUY_CANCELLED";
+  status: string;
+}
+
 export interface AuctionErrorMessage {
   type: "ERROR";
   code: string;
@@ -80,10 +99,14 @@ export type AuctionWebSocketMessage =
   | BidResultMessage
   | AuctionUpdateMessage
   | AuctionClosedMessage
+  | InstantBuyReservedMessage
+  | InstantBuyStartedMessage
+  | InstantBuyCancelledMessage
   | AuctionErrorMessage;
 
 export const AUCTION_STATUS_LABELS: Record<string, string> = {
   ACTIVE: "진행 중",
+  PENDING_INSTANT_BUY: "즉시구매 진행 중",
   COMPLETED: "낙찰",
   FAILED: "유찰",
   PENDING: "대기 중",

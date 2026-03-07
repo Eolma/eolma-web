@@ -7,10 +7,11 @@ import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
 import { LongPressButton } from "@/components/auction/LongPressButton";
 import { ConnectionIndicator } from "@/components/auction/ConnectionIndicator";
+import { InstantBuyBanner } from "@/components/auction/InstantBuyBanner";
 import { formatPrice } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { AnimatedPrice } from "@/components/common/AnimatedPrice";
-import type { ConnectionStatus } from "@/lib/websocket/useAuctionSocket";
+import type { ConnectionStatus, InstantBuyReservation } from "@/lib/websocket/useAuctionSocket";
 
 const BID_PRESETS = [1_000, 5_000, 10_000, 50_000];
 
@@ -25,6 +26,7 @@ interface BidPanelProps {
   lastBidResult?: { status: string; message?: string } | null;
   isPending?: boolean;
   onReconnect?: () => void;
+  instantBuyReservation?: InstantBuyReservation | null;
 }
 
 export function BidPanel({
@@ -38,11 +40,13 @@ export function BidPanel({
   lastBidResult,
   isPending = false,
   onReconnect,
+  instantBuyReservation,
 }: BidPanelProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isConnected = connectionStatus === "connected";
   const nextMinBid = currentPrice + minBidUnit;
   const [bidAmount, setBidAmount] = useState(String(nextMinBid));
+  const isReserved = !!instantBuyReservation;
 
   useEffect(() => {
     setBidAmount(String(nextMinBid));
@@ -73,6 +77,9 @@ export function BidPanel({
       {/* 연결 상태 표시 */}
       <ConnectionIndicator status={connectionStatus} onReconnect={onReconnect} />
 
+      {/* 즉시구매 선점 배너 */}
+      {isReserved && <InstantBuyBanner reservation={instantBuyReservation!} />}
+
       {/* 입찰 거절 알림 */}
       {lastBidResult && lastBidResult.status === "REJECTED" && (
         <div className="bg-error-light text-error-text text-sm px-3 py-2 rounded-lg">
@@ -87,8 +94,8 @@ export function BidPanel({
         </div>
       )}
 
-      {/* 입찰 폼 (로그인 + 활성 경매) */}
-      {isActive && isAuthenticated && (
+      {/* 입찰 폼 (로그인 + 활성 경매 + 선점 아닌 상태) */}
+      {isActive && isAuthenticated && !isReserved && (
         <>
           <div className="space-y-3">
             <Input
@@ -140,6 +147,13 @@ export function BidPanel({
             </LongPressButton>
           )}
         </>
+      )}
+
+      {/* 선점 중일 때 비활성 안내 */}
+      {isActive && isAuthenticated && isReserved && (
+        <div className="text-center py-2">
+          <p className="text-sm text-text-secondary">즉시구매 진행 중에는 입찰할 수 없습니다.</p>
+        </div>
       )}
 
       {/* 비로그인 안내 */}
