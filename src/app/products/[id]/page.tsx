@@ -118,7 +118,11 @@ export default function ProductDetailPage() {
               </div>
               <div>
                 <span className="text-text-secondary">마감 조건</span>
-                <p className="font-medium text-text-primary">{END_TYPE_LABELS[product.endType]}: {product.endValue}</p>
+                <p className="font-medium text-text-primary">
+                  {END_TYPE_LABELS[product.endType]}
+                  {product.durationHours && ` / ${product.durationHours}시간`}
+                  {product.maxBidCount && ` / ${product.maxBidCount}회`}
+                </p>
               </div>
             </div>
           </Card>

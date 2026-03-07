@@ -9,7 +9,8 @@ interface FormProgressProps {
   conditionGrade: string;
   startingPrice: string;
   endType: string;
-  endValue: string;
+  durationHours: string;
+  maxBidCount: string;
   imageUrls: string[];
   instantPrice: string;
   reservePrice: string;
@@ -23,7 +24,7 @@ interface SectionStatus {
 export function FormProgress(props: FormProgressProps) {
   const {
     title, description, category, conditionGrade,
-    startingPrice, endType, endValue,
+    startingPrice, endType, durationHours, maxBidCount,
     imageUrls, instantPrice, reservePrice,
   } = props;
 
@@ -35,7 +36,9 @@ export function FormProgress(props: FormProgressProps) {
     conditionGrade.length > 0,
     startingPrice.length > 0 && Number(startingPrice) > 0,
     endType.length > 0,
-    endValue.length > 0,
+    (endType === "TIME" && durationHours.length > 0) ||
+    (endType === "BID_COUNT" && maxBidCount.length > 0) ||
+    (endType === "COMBINED" && durationHours.length > 0 && maxBidCount.length > 0),
   ];
 
   const requiredComplete = requiredFields.filter(Boolean).length;
@@ -56,7 +59,10 @@ export function FormProgress(props: FormProgressProps) {
     },
     {
       label: "경매 설정",
-      complete: (startingPrice.length > 0 && Number(startingPrice) > 0) && endType.length > 0 && endValue.length > 0,
+      complete: (startingPrice.length > 0 && Number(startingPrice) > 0) && endType.length > 0 &&
+        ((endType === "TIME" && durationHours.length > 0) ||
+         (endType === "BID_COUNT" && maxBidCount.length > 0) ||
+         (endType === "COMBINED" && durationHours.length > 0 && maxBidCount.length > 0)),
     },
     {
       label: "이미지",

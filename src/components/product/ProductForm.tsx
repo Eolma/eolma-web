@@ -33,7 +33,8 @@ export function ProductForm() {
   const [reservePrice, setReservePrice] = useState("");
   const [minBidUnit, setMinBidUnit] = useState("1000");
   const [endType, setEndType] = useState("TIME");
-  const [endValue, setEndValue] = useState("");
+  const [durationHours, setDurationHours] = useState("");
+  const [maxBidCount, setMaxBidCount] = useState("");
   const [imageUrlInput, setImageUrlInput] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
@@ -63,7 +64,8 @@ export function ProductForm() {
       reservePrice: reservePrice ? Number(reservePrice) : null,
       minBidUnit: Number(minBidUnit),
       endType,
-      endValue,
+      durationHours: durationHours ? Number(durationHours) : null,
+      maxBidCount: maxBidCount ? Number(maxBidCount) : null,
       imageUrls,
     };
 
@@ -94,7 +96,8 @@ export function ProductForm() {
         conditionGrade={conditionGrade}
         startingPrice={startingPrice}
         endType={endType}
-        endValue={endValue}
+        durationHours={durationHours}
+        maxBidCount={maxBidCount}
         imageUrls={imageUrls}
         instantPrice={instantPrice}
         reservePrice={reservePrice}
@@ -186,14 +189,14 @@ export function ProductForm() {
           <Select
             label="마감 조건"
             value={endType}
-            onChange={(e) => { setEndType(e.target.value); setEndValue(""); }}
+            onChange={(e) => { setEndType(e.target.value); setDurationHours(""); setMaxBidCount(""); }}
             options={END_TYPES.map((t) => ({ value: t, label: END_TYPE_LABELS[t] }))}
           />
-          {endType === "TIME" ? (
+          {(endType === "TIME" || endType === "COMBINED") && (
             <Select
               label="경매 시간"
-              value={endValue}
-              onChange={(e) => setEndValue(e.target.value)}
+              value={durationHours}
+              onChange={(e) => setDurationHours(e.target.value)}
               placeholder="선택하세요"
               options={[
                 { value: "6", label: "6시간" },
@@ -205,12 +208,13 @@ export function ProductForm() {
               ]}
               required
             />
-          ) : (
+          )}
+          {(endType === "BID_COUNT" || endType === "COMBINED") && (
             <Input
               label="최대 입찰 횟수"
               type="number"
-              value={endValue}
-              onChange={(e) => setEndValue(e.target.value)}
+              value={maxBidCount}
+              onChange={(e) => setMaxBidCount(e.target.value)}
               placeholder="예: 50"
               min="1"
               required

@@ -8,7 +8,8 @@ export interface RegisterProductRequest {
   reservePrice: number | null;
   minBidUnit: number;
   endType: string;
-  endValue: string;
+  durationHours: number | null;
+  maxBidCount: number | null;
   imageUrls: string[];
 }
 
@@ -26,7 +27,8 @@ export interface ProductResponse {
   reservePrice: number | null;
   minBidUnit: number;
   endType: string;
-  endValue: string;
+  durationHours: number | null;
+  maxBidCount: number | null;
   status: string;
   imageUrls: string[] | null;
   createdAt: string;
