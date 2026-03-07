@@ -20,6 +20,8 @@ const DURATION = 2000;
 
 export function BidCelebration({ onComplete }: { onComplete?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -53,7 +55,7 @@ export function BidCelebration({ onComplete }: { onComplete?: () => void }) {
       const elapsed = Date.now() - startTime;
       if (elapsed > DURATION) {
         ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
-        onComplete?.();
+        onCompleteRef.current?.();
         return;
       }
 
@@ -83,7 +85,7 @@ export function BidCelebration({ onComplete }: { onComplete?: () => void }) {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [onComplete]);
+  }, []);
 
   return (
     <canvas
