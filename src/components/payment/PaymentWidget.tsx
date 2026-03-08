@@ -29,12 +29,13 @@ export function PaymentWidget({ orderId, amount, orderName, buyerId }: PaymentWi
 
         await widgets.setAmount({ currency: "KRW", value: amount });
         await Promise.all([
-          widgets.renderPaymentMethods({ selector: "#payment-method" }),
-          widgets.renderAgreement({ selector: "#agreement" }),
+          widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
+          widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" }),
         ]);
 
         widgetsRef.current = widgets;
-      } catch {
+      } catch (err) {
+        console.error("Payment widget init failed:", err);
         setError("결제 위젯을 불러오는데 실패했습니다.");
       } finally {
         setLoading(false);
