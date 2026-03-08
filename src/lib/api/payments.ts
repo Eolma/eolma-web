@@ -12,7 +12,7 @@ export async function confirmPayment(req: ConfirmPaymentRequest): Promise<Paymen
   });
 }
 
-export async function cancelPayment(id: number): Promise<PaymentResponse> {
+export async function cancelPayment(id: string): Promise<PaymentResponse> {
   return apiClient<PaymentResponse>(`/api/v1/payments/${id}/cancel`, {
     method: "POST",
   });
@@ -29,6 +29,6 @@ export async function getMyPayments(params?: {
   return apiClient(`/api/v1/payments/me${qs ? `?${qs}` : ""}`);
 }
 
-export async function getPayment(id: number): Promise<PaymentResponse> {
+export async function getPayment(id: string): Promise<PaymentResponse> {
   return apiClient<PaymentResponse>(`/api/v1/payments/${id}`);
 }

@@ -5,11 +5,11 @@ export interface ConfirmPaymentRequest {
 }
 
 export interface PaymentResponse {
-  id: number;
+  id: string;
   auctionId: number;
   productId: number;
-  buyerId: number;
-  sellerId: number;
+  buyerId: string;
+  sellerId: string;
   amount: number;
   status: string;
   tossPaymentKey: string | null;

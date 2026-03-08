@@ -16,7 +16,7 @@ export interface LoginResponse {
 }
 
 export interface MemberResponse {
-  id: number;
+  id: string;
   email: string;
   nickname: string | null;
   profileImage: string | null;

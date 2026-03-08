@@ -1,7 +1,7 @@
 export interface AuctionResponse {
   id: number;
   productId: number;
-  sellerId: number;
+  sellerId: string;
   title: string;
   startingPrice: number;
   instantPrice: number | null;
@@ -13,7 +13,7 @@ export interface AuctionResponse {
   maxBidCount: number | null;
   status: string;
   endAt: string;
-  winnerId: number | null;
+  winnerId: string | null;
   winningPrice: number | null;
   createdAt: string;
   updatedAt: string;
@@ -31,7 +31,7 @@ export interface AuctionListResponse {
 export interface BidHistoryResponse {
   id: number;
   auctionId: number;
-  bidderId: number;
+  bidderId: string;
   amount: number;
   bidType: string;
   status: string;
@@ -65,7 +65,7 @@ export interface AuctionUpdateMessage {
 
 export interface AuctionClosedMessage {
   type: "AUCTION_CLOSED";
-  winnerId: number;
+  winnerId: string;
   winningPrice: number;
   status: string;
 }
@@ -79,7 +79,7 @@ export interface InstantBuyReservedMessage {
 
 export interface InstantBuyStartedMessage {
   type: "INSTANT_BUY_STARTED";
-  buyerId: number;
+  buyerId: string;
   expiresAt: string;
   status: string;
 }

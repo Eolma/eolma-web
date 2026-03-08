@@ -17,7 +17,7 @@ export type UpdateProductRequest = RegisterProductRequest;
 
 export interface ProductResponse {
   id: number;
-  sellerId: number;
+  sellerId: string;
   title: string;
   description: string;
   category: string;
