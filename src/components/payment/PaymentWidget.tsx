@@ -5,7 +5,7 @@ import { loadTossPayments, TossPaymentsWidgets } from "@tosspayments/tosspayment
 import { Button } from "@/components/common/Button";
 import { Loading } from "@/components/common/Loading";
 
-const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
 interface PaymentWidgetProps {
   orderId: string;
