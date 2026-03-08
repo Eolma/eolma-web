@@ -121,6 +121,7 @@ export default function PaymentPage() {
         orderId={payment.tossOrderId}
         amount={payment.amount}
         orderName={`얼마 경매 #${payment.auctionId}`}
+        buyerId={payment.buyerId}
       />
 
       <div className="mt-4 text-center">
