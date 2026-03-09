@@ -103,7 +103,7 @@ export default function PaymentPage() {
   const isUrgent = remainingSeconds <= 60;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-8">
+    <div data-theme-override="light" className="max-w-lg mx-auto px-4 py-8 bg-bg rounded-2xl">
       <h1 className="text-2xl font-bold text-text-primary mb-6">결제</h1>
 
       {/* 카운트다운 타이머 */}

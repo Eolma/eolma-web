@@ -21,28 +21,49 @@ export function PaymentWidget({ orderId, amount, orderName, buyerId }: PaymentWi
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+
     async function initWidget() {
       try {
         const customerKey = `eolma_${buyerId}`;
         const tossPayments = await loadTossPayments(CLIENT_KEY);
-        const widgets = tossPayments.widgets({ customerKey });
+        if (cancelled) return;
 
+        const widgets = tossPayments.widgets({ customerKey });
         await widgets.setAmount({ currency: "KRW", value: amount });
+        if (cancelled) return;
+
         await Promise.all([
           widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
           widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" }),
         ]);
 
-        widgetsRef.current = widgets;
+        if (!cancelled) {
+          widgetsRef.current = widgets;
+        }
       } catch (err) {
-        console.error("Payment widget init failed:", err);
-        setError("결제 위젯을 불러오는데 실패했습니다.");
+        if (!cancelled) {
+          console.error("Payment widget init failed:", err);
+          setError("결제 위젯을 불러오는데 실패했습니다.");
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     initWidget();
+
+    return () => {
+      cancelled = true;
+      widgetsRef.current = null;
+      // 위젯이 렌더링한 내부 DOM 정리
+      const methodEl = document.getElementById("payment-method");
+      const agreementEl = document.getElementById("agreement");
+      if (methodEl) methodEl.innerHTML = "";
+      if (agreementEl) agreementEl.innerHTML = "";
+    };
   }, [amount, buyerId]);
 
   async function handlePayment() {
@@ -67,18 +88,23 @@ export function PaymentWidget({ orderId, amount, orderName, buyerId }: PaymentWi
     }
   }
 
-  if (loading) return <Loading text="결제 위젯 로딩 중..." />;
-
   return (
     <div className="space-y-4">
+      {loading && <Loading text="결제 위젯 로딩 중..." />}
       {error && (
         <div className="bg-error-light text-error-text text-sm px-4 py-3 rounded-lg">{error}</div>
       )}
-      <div id="payment-method" />
-      <div id="agreement" />
-      <Button onClick={handlePayment} loading={paying} className="w-full" size="lg">
-        결제하기
-      </Button>
+      <div className={`rounded-xl overflow-hidden ${loading ? "hidden" : ""}`}>
+        <div id="payment-method" />
+      </div>
+      <div className={`rounded-xl overflow-hidden ${loading ? "hidden" : ""}`}>
+        <div id="agreement" />
+      </div>
+      {!loading && (
+        <Button onClick={handlePayment} loading={paying} className="w-full" size="lg">
+          결제하기
+        </Button>
+      )}
     </div>
   );
 }

@@ -57,6 +57,56 @@
   --color-overlay: rgba(0, 0, 0, 0.5);
 }
 
+/* ===== Light Theme Override (결제 페이지 등 특정 영역) ===== */
+[data-theme-override="light"] {
+  /* Brand / Primary */
+  --color-primary: var(--color-purple-600);
+  --color-primary-hover: var(--color-purple-700);
+  --color-primary-active: var(--color-purple-800);
+  --color-primary-light: var(--color-purple-50);
+  --color-primary-muted: var(--color-purple-100);
+
+  /* Background */
+  --color-bg: #ffffff;
+  --color-bg-secondary: var(--color-gray-50);
+  --color-bg-tertiary: var(--color-gray-100);
+  --color-bg-elevated: #ffffff;
+
+  /* Text */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-tertiary: var(--color-gray-400);
+  --color-text-inverse: #ffffff;
+  --color-text-on-primary: #ffffff;
+
+  /* Border */
+  --color-border: var(--color-gray-200);
+  --color-border-hover: var(--color-gray-300);
+  --color-border-focus: var(--color-purple-500);
+
+  /* Status */
+  --color-success: var(--color-green-600);
+  --color-success-light: var(--color-green-50);
+  --color-success-text: var(--color-green-700);
+  --color-error: var(--color-red-600);
+  --color-error-light: var(--color-red-50);
+  --color-error-text: var(--color-red-700);
+  --color-warning: var(--color-amber-600);
+  --color-warning-light: var(--color-amber-50);
+  --color-warning-text: var(--color-amber-700);
+  --color-info: var(--color-blue-600);
+  --color-info-light: var(--color-blue-50);
+  --color-info-text: var(--color-blue-700);
+
+  /* Accent */
+  --color-accent: #e44d3a;
+  --color-accent-light: rgba(228, 77, 58, 0.08);
+  --color-accent-text: #d4402e;
+
+  /* Overlay */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+}
+
 /* ===== Dark Theme ===== */
 [data-theme="dark"] {
   /* Brand / Primary */
