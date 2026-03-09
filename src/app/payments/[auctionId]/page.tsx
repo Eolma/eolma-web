@@ -8,8 +8,10 @@ import { Button } from "@/components/common/Button";
 import { PaymentWidget } from "@/components/payment/PaymentWidget";
 import type { PaymentResponse } from "@/types/payment";
 import { getPaymentByAuction } from "@/lib/api/payments";
-import { cancelInstantBuy } from "@/lib/api/auctions";
+import { cancelInstantBuy, heartbeatInstantBuy } from "@/lib/api/auctions";
 import { formatPrice, formatDateTime } from "@/lib/utils/format";
+
+const HEARTBEAT_INTERVAL = 15000;
 
 export default function PaymentPage() {
   const params = useParams();
@@ -37,6 +39,8 @@ export default function PaymentPage() {
         const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
         setRemainingSeconds(remaining);
       } catch {
+        // 결제 정보 조회 실패 시 즉시구매 예약 해제
+        cancelInstantBuy(auctionId).catch(() => {});
         setError("결제 정보를 찾을 수 없습니다.");
       } finally {
         setLoading(false);
@@ -44,6 +48,19 @@ export default function PaymentPage() {
     }
     fetchPayment();
   }, [auctionId, router]);
+
+  // 즉시구매 예약 heartbeat (15초마다 TTL 갱신)
+  useEffect(() => {
+    if (!payment) return;
+    const interval = setInterval(async () => {
+      const alive = await heartbeatInstantBuy(auctionId);
+      if (!alive) {
+        clearInterval(interval);
+        router.push(`/auctions/${auctionId}`);
+      }
+    }, HEARTBEAT_INTERVAL);
+    return () => clearInterval(interval);
+  }, [payment, auctionId, router]);
 
   // 카운트다운 타이머
   useEffect(() => {

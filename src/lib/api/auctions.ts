@@ -29,6 +29,17 @@ export async function cancelInstantBuy(auctionId: number): Promise<void> {
   });
 }
 
+export async function heartbeatInstantBuy(auctionId: number): Promise<boolean> {
+  try {
+    await apiClient<void>(`/api/v1/auctions/${auctionId}/instant-buy/heartbeat`, {
+      method: "POST",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function getMyAuctions(params?: {
   page?: number;
   size?: number;
