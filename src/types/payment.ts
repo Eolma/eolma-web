@@ -4,6 +4,8 @@ export interface ConfirmPaymentRequest {
   amount: number;
 }
 
+export type PaymentType = "AUCTION_WIN" | "INSTANT_BUY";
+
 export interface PaymentResponse {
   id: string;
   auctionId: number;
@@ -11,6 +13,7 @@ export interface PaymentResponse {
   buyerId: string;
   sellerId: string;
   amount: number;
+  paymentType: PaymentType;
   status: string;
   tossPaymentKey: string | null;
   tossOrderId: string;

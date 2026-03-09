@@ -23,6 +23,7 @@ export default function PaymentPage() {
   const [cancelling, setCancelling] = useState(false);
 
   const auctionId = Number(params.auctionId);
+  const isInstantBuy = payment?.paymentType === "INSTANT_BUY";
 
   useEffect(() => {
     async function fetchPayment() {
@@ -49,9 +50,9 @@ export default function PaymentPage() {
     fetchPayment();
   }, [auctionId, router]);
 
-  // 즉시구매 예약 heartbeat (15초마다 TTL 갱신)
+  // 즉시구매 전용: 예약 heartbeat (15초마다 TTL 갱신)
   useEffect(() => {
-    if (!payment) return;
+    if (!payment || payment.paymentType !== "INSTANT_BUY") return;
     const interval = setInterval(async () => {
       const alive = await heartbeatInstantBuy(auctionId);
       if (!alive) {
@@ -100,7 +101,7 @@ export default function PaymentPage() {
 
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
-  const isUrgent = remainingSeconds <= 60;
+  const isUrgent = isInstantBuy ? remainingSeconds <= 60 : remainingSeconds <= 3600;
 
   return (
     <div data-theme-override="light" className="max-w-lg mx-auto px-4 py-8 bg-bg rounded-2xl">
@@ -113,7 +114,9 @@ export default function PaymentPage() {
           {minutes}:{seconds.toString().padStart(2, "0")}
         </p>
         <p className="text-xs text-text-secondary mt-1">
-          시간 내에 결제하지 않으면 즉시구매가 취소됩니다
+          {isInstantBuy
+            ? "시간 내에 결제하지 않으면 즉시구매가 취소됩니다"
+            : "결제 기한이 지나면 낙찰이 취소될 수 있습니다"}
         </p>
       </Card>
 
@@ -141,16 +144,18 @@ export default function PaymentPage() {
         buyerId={payment.buyerId}
       />
 
-      <div className="mt-4 text-center">
-        <Button
-          variant="ghost"
-          onClick={handleCancel}
-          disabled={cancelling}
-          className="text-text-secondary"
-        >
-          {cancelling ? "취소 중..." : "즉시구매 취소"}
-        </Button>
-      </div>
+      {isInstantBuy && (
+        <div className="mt-4 text-center">
+          <Button
+            variant="ghost"
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="text-text-secondary"
+          >
+            {cancelling ? "취소 중..." : "즉시구매 취소"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
