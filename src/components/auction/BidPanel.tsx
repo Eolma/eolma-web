@@ -27,6 +27,7 @@ interface BidPanelProps {
   isPending?: boolean;
   onReconnect?: () => void;
   instantBuyReservation?: InstantBuyReservation | null;
+  instantBuyLocked?: boolean;
 }
 
 export function BidPanel({
@@ -41,6 +42,7 @@ export function BidPanel({
   isPending = false,
   onReconnect,
   instantBuyReservation,
+  instantBuyLocked = false,
 }: BidPanelProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isConnected = connectionStatus === "connected";
@@ -137,14 +139,21 @@ export function BidPanel({
           </div>
 
           {instantPrice && (
-            <LongPressButton
-              variant="secondary"
-              className="w-full"
-              onConfirm={handleInstantBuy}
-              disabled={!isConnected || isPending}
-            >
-              꾹 눌러 즉시 구매 {formatPrice(instantPrice)}
-            </LongPressButton>
+            <div className="space-y-1">
+              <LongPressButton
+                variant="secondary"
+                className="w-full"
+                onConfirm={handleInstantBuy}
+                disabled={!isConnected || isPending || instantBuyLocked}
+              >
+                꾹 눌러 즉시 구매 {formatPrice(instantPrice)}
+              </LongPressButton>
+              {instantBuyLocked && (
+                <p className="text-xs text-warning-text text-center">
+                  입찰 경쟁이 과열되어 즉시구매가 잠겼습니다.
+                </p>
+              )}
+            </div>
           )}
         </>
       )}

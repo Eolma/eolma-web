@@ -88,11 +88,13 @@ export default function AuctionDetailPage() {
     reconnect,
     instantBuyReservation,
     myInstantBuyReserved,
+    instantBuyLocked,
   } = useAuctionSocket(
     id,
     auction?.currentPrice ?? 0,
     auction?.bidCount ?? 0,
     initialRemainingSeconds,
+    auction?.instantBuyLocked ?? false,
   );
 
   // 내가 즉시구매를 선점했으면 결제 페이지로 이동
@@ -296,6 +298,7 @@ export default function AuctionDetailPage() {
             isPending={isPending}
             onReconnect={reconnect}
             instantBuyReservation={instantBuyReservation}
+            instantBuyLocked={instantBuyLocked}
           />
         </div>
       </div>
@@ -336,6 +339,7 @@ export default function AuctionDetailPage() {
           isPending={isPending}
           onReconnect={reconnect}
           instantBuyReservation={instantBuyReservation}
+          instantBuyLocked={instantBuyLocked}
         />
       </BottomSheet>
     </div>

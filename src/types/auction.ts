@@ -5,6 +5,8 @@ export interface AuctionResponse {
   title: string;
   startingPrice: number;
   instantPrice: number | null;
+  instantBuyLockPercent: number | null;
+  instantBuyLocked: boolean;
   reservePrice: number | null;
   minBidUnit: number;
   currentPrice: number;
@@ -89,6 +91,11 @@ export interface InstantBuyCancelledMessage {
   status: string;
 }
 
+export interface InstantBuyLockedMessage {
+  type: "INSTANT_BUY_LOCKED";
+  status: string;
+}
+
 export interface AuctionErrorMessage {
   type: "ERROR";
   code: string;
@@ -102,6 +109,7 @@ export type AuctionWebSocketMessage =
   | InstantBuyReservedMessage
   | InstantBuyStartedMessage
   | InstantBuyCancelledMessage
+  | InstantBuyLockedMessage
   | AuctionErrorMessage;
 
 export const AUCTION_STATUS_LABELS: Record<string, string> = {

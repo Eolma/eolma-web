@@ -37,6 +37,7 @@ interface UseAuctionSocketReturn {
   reconnect: () => void;
   instantBuyReservation: InstantBuyReservation | null;
   myInstantBuyReserved: InstantBuyReservedMessage | null;
+  instantBuyLocked: boolean;
 }
 
 export function useAuctionSocket(
@@ -44,6 +45,7 @@ export function useAuctionSocket(
   initialPrice: number,
   initialBidCount: number,
   initialRemainingSeconds: number,
+  initialInstantBuyLocked: boolean = false,
 ): UseAuctionSocketReturn {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -60,6 +62,7 @@ export function useAuctionSocket(
   const [isPending, setIsPending] = useState(false);
   const [instantBuyReservation, setInstantBuyReservation] = useState<InstantBuyReservation | null>(null);
   const [myInstantBuyReserved, setMyInstantBuyReserved] = useState<InstantBuyReservedMessage | null>(null);
+  const [instantBuyLocked, setInstantBuyLocked] = useState(initialInstantBuyLocked);
 
   useEffect(() => {
     if (initialPrice > 0) setCurrentPrice(initialPrice);
@@ -140,6 +143,9 @@ export function useAuctionSocket(
         case "INSTANT_BUY_CANCELLED":
           setInstantBuyReservation(null);
           setMyInstantBuyReserved(null);
+          break;
+        case "INSTANT_BUY_LOCKED":
+          setInstantBuyLocked(true);
           break;
       }
     };
@@ -222,5 +228,6 @@ export function useAuctionSocket(
     reconnect,
     instantBuyReservation,
     myInstantBuyReserved,
+    instantBuyLocked,
   };
 }
